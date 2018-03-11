@@ -54,14 +54,16 @@
 
   <main id="maincontent">
     <section id="map-container">
-      <div id="map" role="application" aria-label="Google Maps showing all the selected restaurants"></div>
+      <div id="map" role="application" aria-label="Google Maps showing all the selected restaurants" aria-hidden="true"></div>
     </section>
     <section>
       <div class="filter-options">
         <h2>Filter Results</h2>
+        <label for="neighborhoods-select">Neighborhood</label>
         <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
           <option value="all">All Neighborhoods</option>
         </select>
+        <label for="cuisines-select">Cuisine</label>
         <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()">
           <option value="all">All Cuisines</option>
         </select>
