@@ -2,6 +2,7 @@
 /* CSS Document */
 html {
   box-sizing: border-box;
+  font-size: 14px;
   /* System Fonts as used by Medium and WordPress */
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
 }
@@ -9,7 +10,7 @@ html {
   box-sizing: inherit;
 }
 body,td,th,p{
-	font-size: 16px;
+	font-size: 1rem;
 	line-height: 1.5;
 	color: #333;
 }
@@ -58,12 +59,22 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 #footer a:focus {
   color:#f09e9e
 }
+@media screen and (min-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+}
+@media screen and (min-width: 992px) {
+  html {
+    font-size: 16px;
+  }
+}
 /* ====================== Navigation ====================== */
 header div {
   display: flex;
   align-content: center;
   width: 100%;
-  height: 80px;
+  height: 70px;
   padding:0 15px;
   text-align: center;
   border-top: 5px solid #ac201b;
@@ -71,6 +82,7 @@ header div {
 }
 header h1 {
   margin: auto;
+  padding-bottom: 2px;
   font-size: 1.1rem;
   line-height: 1.2em;
   letter-spacing: 0.5em;
@@ -115,10 +127,7 @@ header h1 a:focus {
 }
 
 .skip-link {
-  position:absolute;
-}
-
-.skip-link {
+  display: block;
   position:absolute;
   top:-999px;
   left:0;
@@ -131,7 +140,7 @@ header h1 a:focus {
   background-color: #1d50b0;
 }
 .skip-link:focus {
-  top:80px;
+  top: 70px;
   color: #fff;
 }
 
@@ -201,7 +210,7 @@ header h1 a:focus {
   flex-wrap: wrap;
   max-width: 1170px;
   margin: 0 auto;
-  padding: 30px 0 60px;
+  padding: 2em 0;
   text-align: center;
   background-color: #f3f3f3;
   list-style: outside none none;
@@ -229,7 +238,7 @@ header h1 a:focus {
 #restaurants-list li div {
   display: flex;
   flex-direction: column;
-  min-height: 224px;
+  min-height: 206px;
   padding:0 30px 30px;
 }
 #restaurants-list li h2 {
@@ -280,6 +289,9 @@ header h1 a:focus {
   #restaurants-list li {
     width: 33.333%
   }
+  #restaurants-list li div {
+    min-height: 224px;
+   }
 }
 /* ====================== Restaurant Details ====================== */
 .inside header {
