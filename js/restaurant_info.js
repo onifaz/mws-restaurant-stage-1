@@ -54,6 +54,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const address           = document.getElementById('restaurant-address');
         address.innerHTML = restaurant.address;
+        address.setAttribute('tabindex','0');
 
   const image           = document.getElementById('restaurant-img');
         image.className = 'restaurant-img'
@@ -142,20 +143,23 @@ createReviewHTML = (review) => {
   article.setAttribute('tabindex','0');
   article.setAttribute('arial-label','Review.');
 
-  const name           = document.createElement('p');
-        name.innerHTML = review.name;
-  name.setAttribute('class','review--author');
-  name.setAttribute('aria-label',`Author: ${review.name}.`);
-  article.appendChild(name);
-
+  const div = document.createElement('div');
   const date           = document.createElement('p');
         date.innerHTML = review.date;
   date.setAttribute('aria-label',`Date: ${review.date}.`);
   date.setAttribute('class','review--date');
-  article.appendChild(date);
+  div.appendChild(date);
+
+  const name           = document.createElement('p');
+        name.innerHTML = review.name;
+  name.setAttribute('class','review--author');
+  name.setAttribute('aria-label',`Author: ${review.name}.`);
+  div.appendChild(name);
+  div.setAttribute('class','review--head');
+  article.appendChild(div);
 
   const rating = document.createElement('p');
-  let ratingString = '<span arial-hidden="true">Rating: </span><span arial-hidden="true">';
+  let ratingString = '<span class="review--ratingTitle" arial-hidden="true">Rating</span> <span class="review--ratingStars" arial-hidden="true">';
   for (let i = 0, len = review.rating; i < len; i++) {
     ratingString += '<span class="full">&#9733;</span>';
   }
@@ -172,6 +176,7 @@ createReviewHTML = (review) => {
 
   const comments = document.createElement('p');
   comments.innerHTML = review.comments;
+  comments.setAttribute('class','review--comment');
   article.appendChild(comments);
 
   li.appendChild(article);

@@ -23,7 +23,7 @@
   <!-- <link rel="mask-icon" href="/path/to/icon.svg" color="blue"> -->
 
   <!-- Name of web application (only should be used if the website is used as an app) -->
-  <meta name="application-name" content="Restaurant Reviews">
+  <meta name="application-name" content="RestaReviews">
   <!-- Theme Color for Chrome, Firefox OS and Opera -->
   <!-- <meta name="theme-color" content="#4285f4"> -->
 
@@ -31,7 +31,7 @@
   <!-- <meta name="mobile-web-app-capable" content="yes"> -->
   <!-- More info: https://developer.chrome.com/multidevice/android/installtohomescreen -->
 
-  <meta name="apple-mobile-web-app-title" content="Restaurant Reviews" />
+  <meta name="apple-mobile-web-app-title" content="RestaReviews" />
   <!-- Enable standalone (full-screen) mode -->
   <!--<meta name="apple-mobile-web-app-capable" content="yes">-->
   <!-- Status bar appearance (has no effect unless standalone mode is enabled) -->
@@ -76,10 +76,14 @@
         <h1 id="restaurant-name"></h1>
         <img id="restaurant-img">
         <p id="restaurant-cuisine"></p>
-        <h2>Address</h2>
-        <p id="restaurant-address"></p>
-        <h2>Opening hours</h2>
-        <table id="restaurant-hours"></table>
+        <div class="restaurant-address">
+          <h2>Address</h2>
+          <p id="restaurant-address"></p>
+        </div>
+        <div class="restaurant-hours">
+          <h2>Opening hours</h2>
+          <table id="restaurant-hours"></table>
+        </div>
       </article>
     </section>
     <!-- end restaurant -->
