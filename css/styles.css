@@ -331,6 +331,7 @@ a[aria-current=page]{
   max-width:840px;
   margin:0 auto;
   padding:15px;
+  border-bottom: 3px solid #E53935;
   background:#fff;
   box-shadow: 0 3px 8px rgba(0,0,0,0.15);
 }
@@ -514,6 +515,7 @@ p.review--comment {
   }
   #restaurant-name {
     width: calc(100% + 30px);
+    margin-bottom: 30px;
     padding: 28px 31px;
     transform: translateX(-30px);
   }
