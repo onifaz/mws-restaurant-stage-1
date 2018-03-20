@@ -117,6 +117,7 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
   const title     = document.createElement('h2');
   title.innerHTML = 'Reviews';
+  title.setAttribute('id','reviews-title');
   container.appendChild(title);
 
   if (!reviews) {
@@ -141,6 +142,7 @@ createReviewHTML = (review) => {
   const li             = document.createElement('li');
   const article        = document.createElement('article');
   article.setAttribute('tabindex','0');
+  article.setAttribute('role','article');
   article.setAttribute('arial-label','Review.');
 
   const div = document.createElement('div');
