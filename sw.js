@@ -1,6 +1,6 @@
 // code largely inspired by Udacity's Offline Web application course (ud899)
-const cacheNameMain  = 'restareviews-v4';
-const cacheNamePhoto = 'restareviewsPhotos-v2';
+const cacheNameMain  = 'restareviews-v7';
+const cacheNamePhoto = 'restareviewsPhotos-v4';
 const urlsToCache = [
   '/',
   '/sw.js',
@@ -9,6 +9,7 @@ const urlsToCache = [
   '/js/dbhelper.js',
   '/js/main.js',
   '/js/restaurant_info.js',
+  '/js/swregister.js',
   '/data/restaurants.json',
   'https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css'
 ];
@@ -57,7 +58,11 @@ self.addEventListener('fetch', function(event) {
         });
       })
     );
-
+   } else if (requestUrl.pathname.startsWith('/restaurant.html')) {
+      event.respondWith(
+          caches.match('restaurant.html')
+          .then(response => response || fetch(event.request))
+      );
   } else { //all other requests..
     event.respondWith(
       caches.match(event.request).then(response => (

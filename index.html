@@ -52,7 +52,7 @@
   <a href="#content" class="skip-link">Skip map to restaurants' filter and list</a>
   <main id="maincontent" role="main">
     <section id="map-container">
-      <div id="map" role="application" aria-label="Google Maps showing all the selected restaurants" aria-hidden="true"></div>
+      <div id="map" role="application" aria-label="Google Maps showing all the selected restaurants" aria-hidden="true"><span class="map---placeholder">Google map is loading</span></div>
     </section>
     <section id="content" role="region">
       <div class="filter-options">
@@ -69,11 +69,12 @@
       <ul id="restaurants-list"></ul>
     </section>
   </main>
-  <footer id="footer" role=”contentinfo”>
+  <footer id="footer">
     Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
   </footer>
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
+  <script type="application/javascript" charset="utf-8" src="js/swregister.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBN-_N7NAK_k8QKsoHe6pd4M8aIhA1HX6E&libraries=places&callback=initMap"></script>
 </body>
 

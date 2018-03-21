@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchCuisines();
 });
 
+
+
 /**
  * Fetch all neighborhoods and set their HTML.
  */
@@ -129,7 +131,7 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
   });
-  addMarkersToMap();
+  if (typeof google === 'object' && typeof google.maps === 'object') addMarkersToMap();
 }
 
 /**
@@ -187,12 +189,4 @@ addMarkersToMap = (restaurants = self.restaurants) => {
   });
 }
 
-/**
- * Register the service worker.
- */
-if (navigator.serviceWorker) {
-  navigator.serviceWorker
-    .register('/sw.js')
-    //.then(() => console.log('SW is registered!'))
-    //.catch((err) => console.log("SW registration ", err));
-};
+updateRestaurants();

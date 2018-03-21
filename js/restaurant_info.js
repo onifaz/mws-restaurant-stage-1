@@ -14,7 +14,7 @@ window.initMap = () => {
         center: restaurant.latlng,
         scrollwheel: false
       });
-      fillBreadcrumb();
+      //fillBreadcrumb();
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
     }
   });
@@ -39,6 +39,8 @@ fetchRestaurantFromURL = (callback) => {
         console.error(error);
         return;
       }
+      document.title = self.restaurant.name + " Restaurant Info";
+      fillBreadcrumb();
       fillRestaurantHTML();
       callback(null, restaurant)
     });
@@ -167,7 +169,7 @@ createReviewHTML = (review) => {
   }
   if(review.rating < 5) {
     for (let i = 0, len = 5 - review.rating; i < len; i++) {
-      ratingString += '<span class="empty">&#9733;</span>';
+      ratingString += '<span class="empty"></span>';
     }
   }
   ratingString     += '</span>';
@@ -217,3 +219,12 @@ getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+/* Pouolate the page without waiting for google maps*/
+fetchRestaurantFromURL((error, restaurant) => {
+  if (error) { // Got an error!
+    console.error(error);
+  } else {
+
+  }
+});
