@@ -1,6 +1,6 @@
 # Restaurant Review webapp for Udacity's Mobile Web Specialist Nanodegree
 
-
+This project implents the Jake Archibald's wonderful [idb.js – IndexedDB, but with promises](https://github.com/jakearchibald/idb).
 
 ---
 
