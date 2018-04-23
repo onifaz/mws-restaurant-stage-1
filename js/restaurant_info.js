@@ -228,8 +228,6 @@ getParameterByName = (name, url) => {
 /* Populate the page without waiting for google maps*/
 fetchRestaurantFromURL((error, restaurant) => {
   if (error) {
-    // Got an error!
     console.error(error);
-  } else {
   }
 });
