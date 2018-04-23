@@ -225,7 +225,7 @@ getParameterByName = (name, url) => {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 };
 
-/* Pouolate the page without waiting for google maps*/
+/* Populate the page without waiting for google maps*/
 fetchRestaurantFromURL((error, restaurant) => {
   if (error) {
     // Got an error!
