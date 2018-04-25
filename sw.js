@@ -10,7 +10,6 @@ const urlsToCache = [
   '/js/main.js',
   '/js/restaurant_info.js',
   '/js/swregister.js',
-  '/data/restaurants.json',
   'https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css'
 ];
 
