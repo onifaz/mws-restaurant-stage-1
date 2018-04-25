@@ -2,17 +2,19 @@
  * Common database helper functions.
  */
 class DBHelper {
+  // TODO: DELETE OLD – stage1 - CODE
   /**
-   * Database URL. -> NO MORE!
+   * Database URL. -> NO MORE! now from REST_URL!
    * Change this to restaurants.json file location on your server.
    */
   /* static get DATABASE_URL() {
     const port = 8000; // Change this to your server port
     return `http://localhost:${port}/data/restaurants.json`;
   } */
+
   /**
    * REST Api URL -> Pointing to mws-restaurant-page-2 server
-   * Change this to URL of your server.
+   * Change this to the URL of your server.
    */
   static get REST_URL() {
     const port = 1337; // Change this to your server port
@@ -20,9 +22,50 @@ class DBHelper {
   }
 
   /**
+   * IDB name
+   */
+  static get IDB_NAME() {
+    return 'restareviews';
+  }
+  /**
+   * iDB version
+   */
+  static get IDB_VERSION() {
+    return 1;
+  }
+  /**
+   * iDB store name for restaurants
+   */
+  static get IDB_STORE_RESTAURANTS() {
+    return 'restaurants';
+  }
+
+  /**
+   * Get indexDB (better -> get IDB but promised)
+   */
+  static openIDB() {
+    // If the browser doesn't support service worker,
+    // we don't care about having a database
+    if (!navigator.serviceWorker) {
+      return Promise.resolve();
+    }
+    return idb.open(DBHelper.IDB_NAME, DBHelper.IDB_VERSION, upgradeDb => {
+      var storeRestaurants = upgradeDb.createObjectStore(
+        DBHelper.IDB_STORE_RESTAURANTS,
+        {
+          keyPath: 'id',
+          autoIncrement: true
+        }
+      );
+      //store.createIndex('by-date', 'time'); //TODO: delete wittr example code
+    });
+  }
+
+  /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
+    // TODO: DELETE OLD – stage1 - CODE
     // let xhr = new XMLHttpRequest();
     // xhr.open('GET', DBHelper.DATABASE_URL);
     // xhr.onload = () => {
@@ -38,28 +81,39 @@ class DBHelper {
     //   }
     // };
     // xhr.send();
-
-    // TODO:
-    // - manage IndexDB
-    // - first serve from indexDB, if there is response also fetch from server then recache and update iDB, else fetch directly from server
-    fetch(DBHelper.REST_URL + 'restaurants')
-      .then(response => {
-        //if restaurants are fetched, parse the JSON response
-        return response.json();
+    DBHelper.openIDB()
+      .then(db => {
+        if (!db) return;
+        return db
+          .transaction(DBHelper.IDB_STORE_RESTAURANTS)
+          .objectStore(DBHelper.IDB_STORE_RESTAURANTS)
+          .getAll();
       })
-      .then(restaurants => {
-        //save restaurants in db and serve the downloaded response
-        //console.log(restaurants);
-        callback(null, restaurants);
-      })
-      .catch(err => {
-        console.log(
-          'Request failed. Returned status of',
-          err,
-          '– DON’T PANIC! (h2g2 pun :D) – Trying to serve data from DB...'
-        );
-        // if error in catching 'em online, go for localDB if available
-        // ...
+      .then(idb_data => {
+        if (idb_data && idb_data.length > 0) return callback(null, idb_data);
+        else {
+          fetch(DBHelper.REST_URL + 'restaurants')
+            .then(response => {
+              //if restaurants are fetched, parse the JSON response
+              return response.json();
+            })
+            .then(restaurants => {
+              //save restaurants in db and serve the downloaded response
+              DBHelper.openIDB().then(db => {
+                if (!db) return;
+                const store = db
+                  .transaction(DBHelper.IDB_STORE_RESTAURANTS, 'readwrite')
+                  .objectStore(DBHelper.IDB_STORE_RESTAURANTS);
+                restaurants.forEach(function(restaurant) {
+                  store.put(restaurant);
+                });
+              });
+              return callback(null, restaurants);
+            })
+            .catch(err => {
+              console.log('Request failed. Returned status of', err);
+            });
+        }
       });
   }
 
@@ -196,10 +250,9 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    // TODO:
-    //  - error handling for restaurant without a photo
-    //  - manage jpeg and webp (maybe from outside this funcion)
-    return `/img/${restaurant.photograph}.jpg`;
+    return restaurant.photograph
+      ? `img/${restaurant.photograph}.jpg`
+      : 'img/no-image-available.svg';
   }
 
   /**

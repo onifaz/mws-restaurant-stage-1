@@ -315,7 +315,7 @@ a[aria-current='page'] {
   height: auto;
   margin: 0;
 
-  background-color: #ccc;
+  background-color: #eee;
 }
 #restaurants-list li div {
   display: flex;

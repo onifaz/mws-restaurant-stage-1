@@ -45,39 +45,41 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
-  //console.log(event.request);
   const requestUrl = new URL(event.request.url);
-  //console.log(requestUrl.origin);
-  //save photos and various images in the defined cache
-  if (
-    requestUrl.origin === location.origin &&
-    (requestUrl.pathname.endsWith('.jpg') ||
+  if (requestUrl.origin === location.origin) {
+    //save photos and various images in the defined cache
+    if (
+      requestUrl.pathname.endsWith('.jpg') ||
       requestUrl.pathname.endsWith('.webp') ||
-      requestUrl.pathname.endsWith('.png'))
-  ) {
-    event.respondWith(
-      caches.open(cacheImages).then(cache => {
-        return cache.match(event.request).then(response => {
-          //if photo is already present return it fro mcache
-          if (response) return response;
-          //else save it in cache and return
-          cache.add(event.request);
-          return fetch(event.request);
-        });
-      })
-    );
-  } else if (requestUrl.pathname.startsWith('/restaurant.html')) {
-    event.respondWith(
-      caches
-        .match('restaurant.html')
-        .then(response => response || fetch(event.request))
-    );
-  } else {
-    //all other requests..
-    event.respondWith(
-      caches
-        .match(event.request)
-        .then(response => response || fetch(event.request))
-    );
+      requestUrl.pathname.endsWith('.png') ||
+      requestUrl.pathname.endsWith('.svg')
+    ) {
+      //console.log('image found!');
+      event.respondWith(
+        caches.open(cacheImages).then(cache => {
+          return cache.match(event.request).then(response => {
+            //if photo is already present return it from cache
+            if (response) return response;
+            //else save it in cache and return
+            cache.add(event.request);
+            return fetch(event.request);
+          });
+        })
+      );
+    } else if (requestUrl.pathname.startsWith('/restaurant.html')) {
+      //restaurant skeleton..
+      event.respondWith(
+        caches
+          .match('restaurant.html')
+          .then(response => response || fetch(event.request))
+      );
+    } else {
+      //all other requests..
+      event.respondWith(
+        caches
+          .match(event.request)
+          .then(response => response || fetch(event.request))
+      );
+    }
   }
 });

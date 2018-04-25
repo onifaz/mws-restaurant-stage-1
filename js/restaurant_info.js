@@ -1,13 +1,22 @@
 let restaurant;
 let map;
 
+document.addEventListener('DOMContentLoaded', event => {
+  /* Populate the page without waiting for google maps*/
+  fetchRestaurantFromURL((error, restaurant) => {
+    if (error) {
+      console.error(error);
+    }
+  });
+});
+
 /**
  * Initialize Google map, called from HTML.
  */
 window.initMap = () => {
   self.map = new google.maps.Map(document.getElementById('map'), {
     zoom: 16,
-    center: restaurant.latlng,
+    center: self.restaurant.latlng,
     scrollwheel: false
   });
   DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
@@ -216,10 +225,3 @@ getParameterByName = (name, url) => {
   if (!results[2]) return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 };
-
-/* Populate the page without waiting for google maps*/
-fetchRestaurantFromURL((error, restaurant) => {
-  if (error) {
-    console.error(error);
-  }
-});
