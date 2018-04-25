@@ -6,11 +6,11 @@ const urlsToCache = [
   '/sw.js',
   '/restaurant.html',
   '/css/styles.css',
+  '/js/idb.js',
   '/js/dbhelper.js',
   '/js/main.js',
   '/js/restaurant_info.js',
-  '/js/swregister.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css'
+  '/js/swregister.js'
 ];
 
 self.addEventListener('install', function(event) {

@@ -14,12 +14,14 @@ document.addEventListener('DOMContentLoaded', event => {
  * Initialize Google map, called from HTML.
  */
 window.initMap = () => {
-  self.map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 16,
-    center: self.restaurant.latlng,
-    scrollwheel: false
-  });
-  DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
+  if (self.restaurant) {
+    self.map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 16,
+      center: self.restaurant.latlng,
+      scrollwheel: false
+    });
+    DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
+  }
 };
 
 /**
