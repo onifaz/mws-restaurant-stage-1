@@ -1,0 +1,23 @@
+{
+  "name": "onifaz-rr",
+  "version": "1.0.0",
+  "description": "Udacity MWS NanoDegree - Restaurant Reviews",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onifaz/mws-restaurant-stage-1.git"
+  },
+  "author": "onifaz [Fabrizio Zani]",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/onifaz/mws-restaurant-stage-1/issues"
+  },
+  "homepage": "https://github.com/onifaz/mws-restaurant-stage-1#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-serve": "^1.4.0"
+  }
+}
