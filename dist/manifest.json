@@ -1,0 +1,53 @@
+{
+  "short_name": "RestaReviews",
+  "name": "Restaurant Reviews",
+  "lang": "en-US",
+  "start_url": "index.html",
+  "description": "A simple app for Udacity's MWS Nanodegree",
+  "display": "standalone",
+  "theme_color": "#1d50b0",
+  "background_color": "#1d50b0",
+  "author": "onifaz – Fabrizio Zani",
+  "icons": [
+    {
+      "src": "icons/72x72r.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/96x96r.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/128x128r.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/144x144r.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/152x152r.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/192x192r.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/384x384r.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/512x512r.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
