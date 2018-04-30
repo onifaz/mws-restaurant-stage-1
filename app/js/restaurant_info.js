@@ -1,5 +1,4 @@
-let restaurant;
-let map;
+let restaurant, map;
 
 document.addEventListener('DOMContentLoaded', event => {
   /* Populate the page without waiting for google maps*/
@@ -13,7 +12,7 @@ document.addEventListener('DOMContentLoaded', event => {
 /**
  * Initialize Google map, called from HTML.
  */
-window.initMap = () => {
+window.initDetailMap = () => {
   if (self.restaurant) {
     self.map = new google.maps.Map(document.getElementById('map'), {
       zoom: 16,

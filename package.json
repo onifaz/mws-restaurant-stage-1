@@ -4,7 +4,8 @@
   "description": "Udacity MWS NanoDegree - Restaurant Reviews",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf node_modules",
+    "cleandist": "rm -rf dist"
   },
   "repository": {
     "type": "git",
@@ -17,11 +18,18 @@
   },
   "homepage": "https://github.com/onifaz/mws-restaurant-stage-1#readme",
   "devDependencies": {
+    "critical": "^1.2.2",
     "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^5.0.0",
+    "gulp-clean-css": "^3.9.3",
+    "gulp-concat": "^2.6.1",
+    "gulp-gzip": "^1.4.2",
+    "gulp-html-minifier": "^0.1.8",
+    "gulp-html-replace": "^1.6.2",
     "gulp-image-resize": "^0.13.0",
     "gulp-imagemin": "^4.1.0",
+    "gulp-order": "^1.1.1",
     "gulp-rename": "^1.2.2",
-    "gulp-replace": "^0.6.1",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify-es": "^1.0.1",
     "gulp-webp": "^3.0.0",

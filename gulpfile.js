@@ -1,28 +1,52 @@
 const gulp = require('gulp'),
-  uglify = require('gulp-uglify-es').default,
+  uglifyjs = require('gulp-uglify-es').default,
+  concat = require('gulp-concat'),
+  order = require('gulp-order'),
+  htmlreplace = require('gulp-html-replace'),
   sourcemaps = require('gulp-sourcemaps'),
-  replace = require('gulp-replace'),
+  htmlmin = require('gulp-html-minifier'),
+  cleancss = require('gulp-clean-css'),
+  gzip = require('gulp-gzip'),
+  autoprefixer = require('gulp-autoprefixer'),
   rename = require('gulp-rename'),
   imagemin = require('gulp-imagemin'),
   imageresize = require('gulp-image-resize'),
   imagewebp = require('gulp-webp');
 
+/** saving all paths in one obj */
+const config = {
+  src: {
+    main: 'app/',
+    img: 'app/img/',
+    imgRest: 'app/img/restaurants/',
+    icons: 'app/icons/',
+    js: 'app/js/',
+    css: 'app/css/'
+  },
+  dest: {
+    main: 'dist/',
+    img: 'dist/img/',
+    imgRest: 'dist/img/restaurants/',
+    icons: 'dist/icons/',
+    js: 'dist/js/',
+    css: 'dist/css/'
+  }
+};
 /** Copy and optimize images  */
 gulp.task('imagemin', () =>
   gulp
-    .src('app/img/restaurants/*.jpg')
+    .src(`${config.src.imgRest}*.jpg`)
     .pipe(imagemin([imagemin.jpegtran({ progressive: true })]))
-    .pipe(gulp.dest('dist/img/restaurants/'))
+    .pipe(gulp.dest(`${config.dest.imgRest}`))
 );
 
 /** Create smaller image formats  */
 var resizeImageTasks = [];
-
 [75, 50].forEach(function(size) {
   var resizeImageTask = 'resize_' + size;
   gulp.task(resizeImageTask, ['imagemin'], function() {
     return gulp
-      .src('dist/img/restaurants/!(*-small|*-medium).{jpg,png,tiff}')
+      .src(`${config.dest.imgRest}!(*-small|*-medium).{jpg,png,tiff}`)
       .pipe(
         imageresize({
           percentage: size,
@@ -30,41 +54,165 @@ var resizeImageTasks = [];
         })
       )
       .pipe(rename({ suffix: size == 50 ? '-small' : '-medium' }))
-      .pipe(gulp.dest('dist/img/restaurants/'));
+      .pipe(gulp.dest(`${config.dest.imgRest}`));
   });
   resizeImageTasks.push(resizeImageTask);
 });
-
 gulp.task('resize_images', resizeImageTasks);
 
 /** Create webp versions  */
 gulp.task('imagewebp', ['imagemin', 'resize_images'], () =>
   gulp
-    .src('dist/img/restaurants/*')
+    .src(`${config.dest.imgRest}*`)
     .pipe(imagewebp({ quality: 60 }))
-    .pipe(gulp.dest('dist/img/restaurants/'))
+    .pipe(gulp.dest(`${config.dest.imgRest}`))
 );
 
-/** copy favicon, swrvice worker, app manifest */
-gulp.task('copyfiles', () =>
-  gulp.src('app/*.{ico,json,js}').pipe(gulp.dest('dist/'))
+/** copy all files not used in other tasks */
+gulp.task('copyfiles', [
+  'copyfiles-otherimg',
+  'copyfiles-main',
+  'copyfiles-sw'
+]);
+gulp.task('copyfiles-main', () =>
+  gulp
+    .src(`${config.src.main}*.{ico,json}`)
+    .pipe(gulp.dest(`${config.dest.main}`))
+);
+gulp.task('copyfiles-sw', () =>
+  gulp
+    .src(`${config.src.main}*-build.js`)
+    .pipe(rename('sw.js'))
+    .pipe(gulp.dest(`${config.dest.main}`))
+);
+gulp.task('copyfiles-otherimg', () =>
+  gulp.src(`${config.src.img}*.{svg,jpg}`).pipe(gulp.dest(`${config.dest.img}`))
+);
+
+/** gzip all zippable resourses */
+gulp.task('gzip', [
+  'gzip-main',
+  'gzip-icons',
+  'gzip-js',
+  'gzip-sw',
+  'gzip-css',
+  'gzip-html'
+]);
+gulp.task('gzip-main', ['copyfiles'], () =>
+  gulp
+    .src(`${config.dest.img}*.svg`)
+    .pipe(gzip())
+    .pipe(gulp.dest(`${config.dest.img}`))
+);
+gulp.task('gzip-icons', ['icons'], function() {
+  gulp
+    .src(`${config.dest.icons}*.svg`)
+    .pipe(gzip())
+    .pipe(gulp.dest(`${config.dest.icons}`));
+});
+gulp.task('gzip-css', ['minifycss'], () =>
+  gulp
+    .src(`${config.dest.css}*.css`)
+    .pipe(gzip())
+    .pipe(gulp.dest(`${config.dest.css}`))
+);
+gulp.task('gzip-js', ['minifyjs'], () =>
+  gulp
+    .src(`${config.dest.js}*.js`)
+    .pipe(gzip())
+    .pipe(gulp.dest(`${config.dest.js}`))
+);
+gulp.task('gzip-sw', ['copyfiles-sw'], () =>
+  gulp
+    .src(`${config.dest.main}*.js`)
+    .pipe(gzip())
+    .pipe(gulp.dest(`${config.dest.main}`))
+);
+gulp.task('gzip-html', ['minifyhtml'], () =>
+  gulp
+    .src(`${config.dest.main}*.html`)
+    .pipe(gzip())
+    .pipe(gulp.dest(`${config.dest.main}`))
 );
 
 /** Copy and optimize icons */
 gulp.task('icons', () =>
   gulp
-    .src('app/icons/*')
+    .src(`${config.src.icons}*`)
     .pipe(imagemin([imagemin.optipng({ optimizationLevel: 5 })]))
-    .pipe(gulp.dest('dist/icons'))
+    .pipe(gulp.dest(`${config.dest.icons}`))
 );
 
-/*
-gulp.task('templates', function() {
+gulp.task('minifyjs', ['bundlejs', 'mainjs']);
+
+/** bundle js */
+gulp.task('bundlejs', () =>
   gulp
-    .src(['file.txt'])
-    .pipe(replace(/<!-- Beginning scripts [\s\S]* End scripts -->/g, '$1foo'))
-    .pipe(gulp.dest('build/'));
+    .src(`${config.src.js}{idb.js,dbhelper.js,swregister.js}`)
+    .pipe(sourcemaps.init())
+    .pipe(
+      order(
+        [
+          `${config.src.js}idb.js`,
+          `${config.src.js}dbhelper.js`,
+          `${config.src.js}swregister.js`
+        ],
+        { base: __dirname }
+      )
+    )
+    .pipe(concat('bundle.js'))
+    .pipe(uglifyjs())
+    .pipe(sourcemaps.write('./'))
+    .pipe(gulp.dest(`${config.dest.js}`))
+);
+/** main js */
+gulp.task('mainjs', () =>
+  gulp
+    .src(`${config.src.js}{main.js,restaurant_info.js}`)
+    .pipe(sourcemaps.init())
+    .pipe(uglifyjs())
+    .pipe(sourcemaps.write('./'))
+    .pipe(gulp.dest(`${config.dest.js}`))
+);
+
+gulp.task('minifycss', function() {
+  gulp
+    .src(`${config.src.css}*`)
+    .pipe(concat('styles.css'))
+    .pipe(
+      autoprefixer({
+        browsers: ['last 2 versions', 'not ie <= 10']
+      })
+    )
+    .pipe(cleancss())
+    .pipe(gulp.dest(`${config.dest.css}`));
+});
+
+gulp.task('minifyhtml', () =>
+  gulp
+    .src(`${config.src.main}*.html`)
+    .pipe(
+      htmlreplace({
+        css: 'css/styles.css',
+        js: 'js/bundle.js'
+      })
+    )
+    .pipe(htmlmin({ collapseWhitespace: true, removeComments: true }))
+    .pipe(gulp.dest(`${config.dest.main}`))
+);
+
+/** create dist folder content */
+gulp.task('build-dist', ['copyfiles', 'icons', 'imagewebp', 'gzip']);
+
+/*
+critical css
+var log = require('fancy-log');
+var critical = require('critical').stream;
+// Generate & Inline Critical-path CSS
+gulp.task('critical', function () {
+    return gulp.src('dist/*.html')
+        .pipe(critical({base: 'dist/', inline: true, css: ['dist/styles/components.css','dist/styles/main.css']}))
+        .on('error', function(err) { log.error(err.message); })
+        .pipe(gulp.dest('dist'));
 });
 */
-
-/*create gzip for html, css, svg and js*/
