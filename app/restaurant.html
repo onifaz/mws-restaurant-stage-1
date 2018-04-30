@@ -6,8 +6,10 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Restaurant Info</title>
+  <!-- build:css -->
   <!-- Main CSS file -->
   <link rel="stylesheet" href="css/styles.css" type="text/css">
+  <!-- endbuild -->
 
   <!-- TODO: additional metatags - reference: github.com/joshbuchea/HEAD -->
 
@@ -101,18 +103,19 @@
     </a> All Rights Reserved.
   </footer>
   <!-- End footer -->
-
   <!-- Beginning scripts -->
+  <!-- build:js -->
   <script type="application/javascript" src="js/idb.js"></script>
   <!-- Database helpers -->
   <script type="application/javascript" src="js/dbhelper.js"></script>
-  <!-- Main javascript file -->
-  <script type="application/javascript" src="js/restaurant_info.js"></script>
   <!-- Register service worker -->
   <script type="application/javascript" charset="utf-8" src="js/swregister.js"></script>
+  <!-- endbuild -->
+  <!-- Main javascript file -->
+  <script type="application/javascript" src="js/restaurant_info.js"></script>
   <!-- End scripts -->
   <!-- Google Maps -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBN-_N7NAK_k8QKsoHe6pd4M8aIhA1HX6E&libraries=places&callback=initMap"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBN-_N7NAK_k8QKsoHe6pd4M8aIhA1HX6E&libraries=places&callback=initDetailMap"></script>
 
 </body>
 

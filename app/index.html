@@ -6,11 +6,12 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Restaurant Reviews</title>
+  <!-- build:css -->
   <!-- Main CSS file -->
   <link rel="stylesheet" href="css/styles.css">
+  <!-- endbuild -->
 
   <!-- TODO: additional metatags - reference: github.com/joshbuchea/HEAD -->
-
   <!-- For IE 10 and below -->
   <!-- Place favicon.ico in the root directory - no tag necessary -->
   <!-- Icon in the highest resolution we need it for -->
@@ -73,15 +74,17 @@
       <strong>Restaurant Reviews</strong>
     </a> All Rights Reserved.
   </footer>
-  <!-- Beginning scripts -->
+  <!-- build:js -->
   <script type="application/javascript" src="js/idb.js"></script>
   <!-- Database helpers -->
-  <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
-  <!-- Main javascript file -->
-  <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
+  <script type="application/javascript" src="js/dbhelper.js"></script>
   <!-- Register service worker -->
   <script type="application/javascript" charset="utf-8" src="js/swregister.js"></script>
+  <!-- endbuild -->
+  <!-- Main javascript file -->
+  <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
   <!-- End scripts -->
+  <!-- endbuild -->
   <!-- Google Maps -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBN-_N7NAK_k8QKsoHe6pd4M8aIhA1HX6E&libraries=places&callback=initMap"></script>
 </body>

@@ -1,5 +1,4 @@
-let restaurants, neighborhoods, cuisines;
-var map;
+let restaurants, neighborhoods, cuisines, mainmap;
 var markers = [];
 
 /**
@@ -76,7 +75,7 @@ window.initMap = () => {
     lat: 40.722216,
     lng: -73.987501
   };
-  self.map = new google.maps.Map(document.getElementById('map'), {
+  self.mainmap = new google.maps.Map(document.getElementById('map'), {
     zoom: 12,
     center: loc,
     scrollwheel: false
@@ -193,7 +192,7 @@ addMarkersToMap = (restaurants = self.restaurants) => {
     // Added because sometimes gmap is faster than resta server
     restaurants.forEach(restaurant => {
       // Add marker to the map
-      const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
+      const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.mainmap);
       google.maps.event.addListener(marker, 'click', () => {
         window.location.href = marker.url;
       });
