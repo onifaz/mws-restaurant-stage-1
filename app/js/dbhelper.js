@@ -303,7 +303,7 @@ class DBHelper {
     );
     picture.append(sourcew);
     const sourcej = document.createElement('source');
-    sourcew.setAttribute('sizes', sizes);
+    sourcej.setAttribute('sizes', sizes);
     sourcej.setAttribute(
       'srcset',
       DBHelper.imageSrcsetForRestaurant(restaurant.photograph, 'jpg')
