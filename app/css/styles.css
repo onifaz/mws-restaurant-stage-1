@@ -419,7 +419,7 @@ a[aria-current='page'] {
   background-color: #fff;
   box-shadow: 0 5px 10px rgba(0, 0, 0, .15);
 }
-#restaurants-list .restaurant-img {
+#restaurants-list .restaurant-img img {
   display: block;
 
   width: 100%;
@@ -551,7 +551,8 @@ a[aria-current='page'] {
   color: #fff;
   background: #283593;
 }
-#restaurant-img {
+#restaurant-img,
+.restaurant-img {
   display: block;
 
   width: 100%;

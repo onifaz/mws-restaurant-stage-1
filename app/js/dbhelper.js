@@ -247,12 +247,81 @@ class DBHelper {
   }
 
   /**
-   * Restaurant image URL.
+   * Restaurant page image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return restaurant.photograph
-      ? `img/restaurants/${restaurant.photograph}.jpg`
-      : 'img/no-image-available.svg';
+    if (!restaurant.photograph) {
+      return DBHelper.imageErrorForRestaurant(restaurant);
+    } else {
+      // ref, for sizes and srcset
+      //basic -->small+medium
+      //media="(min-width:401px) and (max-width:600px), (min-width:992px) and (max-width:1199)" -->medium + normal
+      //media="(min-width:601px) and (max-width:991px), (min-width:1200px)" --> normal
+      //sizes="(max-width:991px) 100vw, 50vw"
+      const sizes = '(max-width:991px) 75vw, 45vw';
+      return DBHelper.imagePictureforRestaurant(restaurant, sizes);
+    }
+  }
+  /**
+   * Home page image URL.
+   */
+  static imageUrlForRestaurants(restaurant) {
+    if (!restaurant.photograph) {
+      return DBHelper.imageErrorForRestaurant(restaurant);
+    } else {
+      const sizes =
+        '(max-width: 679px) 400px, (max-width: 989px) and (min-width: 680px) 48vw, (min-width:990px) 350px, (min-width:1780px) 400px';
+      return DBHelper.imagePictureforRestaurant(restaurant, sizes);
+    }
+  }
+
+  /**
+   * Error image
+   */
+  static imageErrorForRestaurant(restaurant) {
+    const image = document.createElement('img');
+    image.className = 'restaurant-img';
+    image.src = 'img/no-image-available.svg';
+    image.setAttribute(
+      'alt',
+      'No photo available for ' + restaurant.name + ' restaurant'
+    );
+    return image;
+  }
+
+  /**
+   * Create picture for image
+   */
+  static imagePictureforRestaurant(restaurant, sizes) {
+    const picture = document.createElement('picture');
+    const sourcew = document.createElement('source');
+    sourcew.setAttribute('sizes', sizes);
+    sourcew.setAttribute('type', 'image/webp');
+    sourcew.setAttribute(
+      'srcset',
+      DBHelper.imageSrcsetForRestaurant(restaurant.photograph, 'webp')
+    );
+    picture.append(sourcew);
+    const sourcej = document.createElement('source');
+    sourcew.setAttribute('sizes', sizes);
+    sourcej.setAttribute(
+      'srcset',
+      DBHelper.imageSrcsetForRestaurant(restaurant.photograph, 'jpg')
+    );
+    picture.append(sourcej);
+    const image = document.createElement('img');
+    image.className = 'restaurant-img';
+    image.src = `img/restaurants/${restaurant.photograph}.jpg`;
+    image.setAttribute('alt', 'Photo of ' + restaurant.name + ' restaurant');
+    picture.append(image);
+    return picture;
+  }
+
+  /**
+   * Create srcset string
+   */
+  static imageSrcsetForRestaurant(imageName, ext) {
+    return `img/restaurants/${imageName}.${ext} 860w, img/restaurants/${imageName}-720.${ext} 780w, img/restaurants/${imageName}-540.${ext} 580w, img/restaurants/${imageName}-350.${ext} 420w`;
   }
 
   /**

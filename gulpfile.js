@@ -37,24 +37,24 @@ gulp.task('imagemin', () =>
   gulp
     .src(`${config.src.imgRest}*.jpg`)
     .pipe(imagemin([imagemin.jpegtran({ progressive: true })]))
-    .pipe(gulp.dest(`${config.dest.imgRest}`))
+    .pipe(gulp.dest(`${config.src.imgRest}`))
 );
 
 /** Create smaller image formats  */
 var resizeImageTasks = [];
-[75, 50].forEach(function(size) {
+[720, 540, 350].forEach(function(size) {
   var resizeImageTask = 'resize_' + size;
   gulp.task(resizeImageTask, ['imagemin'], function() {
     return gulp
       .src(`${config.dest.imgRest}!(*-small|*-medium).{jpg,png,tiff}`)
       .pipe(
         imageresize({
-          percentage: size,
+          width: size,
           quality: 0.5
         })
       )
-      .pipe(rename({ suffix: size == 50 ? '-small' : '-medium' }))
-      .pipe(gulp.dest(`${config.dest.imgRest}`));
+      .pipe(rename({ suffix: '-' + size }))
+      .pipe(gulp.dest(`${config.src.imgRest}`));
   });
   resizeImageTasks.push(resizeImageTask);
 });
@@ -63,17 +63,13 @@ gulp.task('resize_images', resizeImageTasks);
 /** Create webp versions  */
 gulp.task('imagewebp', ['imagemin', 'resize_images'], () =>
   gulp
-    .src(`${config.dest.imgRest}*`)
+    .src(`${config.src.imgRest}*`)
     .pipe(imagewebp({ quality: 60 }))
-    .pipe(gulp.dest(`${config.dest.imgRest}`))
+    .pipe(gulp.dest(`${config.src.imgRest}`))
 );
 
 /** copy all files not used in other tasks */
-gulp.task('copyfiles', [
-  'copyfiles-otherimg',
-  'copyfiles-main',
-  'copyfiles-sw'
-]);
+gulp.task('copyfiles', ['copyfiles-img', 'copyfiles-main', 'copyfiles-sw']);
 gulp.task('copyfiles-main', () =>
   gulp
     .src(`${config.src.main}*.{ico,json}`)
@@ -86,7 +82,14 @@ gulp.task('copyfiles-sw', () =>
     .pipe(gulp.dest(`${config.dest.main}`))
 );
 gulp.task('copyfiles-otherimg', () =>
-  gulp.src(`${config.src.img}*.{svg,jpg}`).pipe(gulp.dest(`${config.dest.img}`))
+  gulp
+    .src(`${config.src.img}*.{svg,jpg,webp}`)
+    .pipe(gulp.dest(`${config.dest.img}`))
+);
+gulp.task('copyfiles-img', () =>
+  gulp
+    .src(`${config.src.imgRest}*.{svg,jpg,webp}`)
+    .pipe(gulp.dest(`${config.dest.imgRest}`))
 );
 
 /** gzip all zippable resourses */
@@ -202,7 +205,7 @@ gulp.task('minifyhtml', () =>
 );
 
 /** create dist folder content */
-gulp.task('build-dist', ['copyfiles', 'icons', 'imagewebp', 'gzip']);
+gulp.task('build-dist', ['copyfiles', 'icons', 'gzip']);
 
 /*
 critical css

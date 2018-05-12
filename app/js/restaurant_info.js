@@ -63,10 +63,9 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   address.innerHTML = restaurant.address;
   address.setAttribute('tabindex', '0');
 
-  const image = document.getElementById('restaurant-img');
-  image.className = 'restaurant-img';
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
-  image.setAttribute('alt', 'Photo of ' + restaurant.name + ' restaurant');
+  const imageDiv = document.getElementById('restaurant-img');
+  const image = DBHelper.imageUrlForRestaurant(restaurant);
+  imageDiv.append(image);
 
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
