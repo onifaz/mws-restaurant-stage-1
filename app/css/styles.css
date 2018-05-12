@@ -329,16 +329,45 @@ a[aria-current='page'] {
 
 /* ====================== Map ====================== */
 #map {
+  position: relative;
+
   display: flex;
+  overflow: hidden;
   align-items: center;
   justify-content: center;
 
   width: 100%;
-  height: 400px;
-  max-height: 70vh;
+  height: 150px;
 
   color: #293592;
-  background-color: #ddd;
+  background-color: #fafafa;
+}
+.map--requested #map,
+.home #map {
+  height: 400px;
+  max-height: 70vh;
+}
+.map---placeholder {
+  position: relative;
+  z-index: 2;
+}
+.map-imagePlaceholder {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+
+  overflow: hidden;
+
+  width: auto;
+  min-width: 100%;
+  height: auto;
+  min-height: 100%;
+
+  transform: translateX(-50%) translateY(-50%);
+}
+div .map---placeholder a {
+  cursor: pointer;
 }
 /* ====================== Restaurant Filtering ====================== */
 .filter-options {
@@ -456,7 +485,8 @@ a[aria-current='page'] {
 
   color: #595858;
 }
-#restaurants-list li a {
+#restaurants-list li a,
+.map---placeholder a {
   font-size: .875rem;
 
   display: block;

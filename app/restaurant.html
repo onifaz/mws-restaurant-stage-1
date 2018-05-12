@@ -65,7 +65,9 @@
     <!-- Beginning map -->
     <section id="map-container">
       <div id="map" role="application" aria-label="Google Maps showing restaurant's location" aria-hidden="true">
-        <span class="map---placeholder">Google map is loading</span>
+        <span class="map---placeholder">
+          <a onClick="addGmapDetail()">See restaurant location on map</a>
+        </span>
       </div>
     </section>
     <!-- End map -->
@@ -108,13 +110,13 @@
   <!-- Database helpers -->
   <script type="application/javascript" src="js/dbhelper.js"></script>
   <!-- Register service worker -->
-  <script type="application/javascript" charset="utf-8" src="js/swregister.js"></script>
+  <!--<script type="application/javascript" charset="utf-8" src="js/swregister.js"></script>-->
   <!-- endbuild -->
   <!-- Main javascript file -->
   <script type="application/javascript" src="js/restaurant_info.js"></script>
   <!-- End scripts -->
   <!-- Google Maps -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBN-_N7NAK_k8QKsoHe6pd4M8aIhA1HX6E&libraries=places&callback=initDetailMap"></script>
+  <!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=XXXXXX&libraries=places&callback=initDetailMap"></script>-->
 
 </body>
 

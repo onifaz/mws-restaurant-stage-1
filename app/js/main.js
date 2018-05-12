@@ -86,6 +86,19 @@ window.initMap = () => {
 };
 
 /**
+ * Add google map only on request of interactivity
+ */
+addGmapMain = () => {
+  document
+    .getElementById('map-container')
+    .setAttribute('class', 'map--requested');
+  const script = document.createElement('script');
+  script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBN-_N7NAK_k8QKsoHe6pd4M8aIhA1HX6E&libraries=places&callback=initMap`;
+  script.type = 'text/javascript';
+  document.body.appendChild(script);
+};
+
+/**
  * Update page and map for current restaurants.
  */
 updateRestaurants = () => {

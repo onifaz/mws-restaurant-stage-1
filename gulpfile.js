@@ -19,6 +19,7 @@ const config = {
     main: 'app/',
     img: 'app/img/',
     imgRest: 'app/img/restaurants/',
+    imgMap: 'app/img/map/',
     icons: 'app/icons/',
     js: 'app/js/',
     css: 'app/css/'
@@ -27,17 +28,24 @@ const config = {
     main: 'dist/',
     img: 'dist/img/',
     imgRest: 'dist/img/restaurants/',
+    imgMap: 'dist/img/map/',
     icons: 'dist/icons/',
     js: 'dist/js/',
     css: 'dist/css/'
   }
 };
-/** Copy and optimize images  */
+/** Optimize images  */
 gulp.task('imagemin', () =>
   gulp
     .src(`${config.src.imgRest}*.jpg`)
     .pipe(imagemin([imagemin.jpegtran({ progressive: true })]))
     .pipe(gulp.dest(`${config.src.imgRest}`))
+);
+gulp.task('imagemapmin', () =>
+  gulp
+    .src(`${config.src.imgMap}*.jpg`)
+    .pipe(imagemin([imagemin.jpegtran({ progressive: true })]))
+    .pipe(gulp.dest(`${config.src.imgMap}`))
 );
 
 /** Create smaller image formats  */
@@ -61,15 +69,27 @@ var resizeImageTasks = [];
 gulp.task('resize_images', resizeImageTasks);
 
 /** Create webp versions  */
-gulp.task('imagewebp', ['imagemin', 'resize_images'], () =>
+gulp.task('imagewebp', () =>
   gulp
     .src(`${config.src.imgRest}*`)
     .pipe(imagewebp({ quality: 60 }))
     .pipe(gulp.dest(`${config.src.imgRest}`))
 );
+gulp.task('imagemapwebp', () =>
+  gulp
+    .src(`${config.src.imgMap}*`)
+    .pipe(imagewebp({ quality: 60 }))
+    .pipe(gulp.dest(`${config.src.imgMap}`))
+);
 
 /** copy all files not used in other tasks */
-gulp.task('copyfiles', ['copyfiles-img', 'copyfiles-main', 'copyfiles-sw']);
+gulp.task('copyfiles', [
+  'copyfiles-img',
+  'copyfiles-main',
+  'copyfiles-sw',
+  'copyfiles-imgmap',
+  'copyfiles-otherimg'
+]);
 gulp.task('copyfiles-main', () =>
   gulp
     .src(`${config.src.main}*.{ico,json}`)
@@ -86,9 +106,14 @@ gulp.task('copyfiles-otherimg', () =>
     .src(`${config.src.img}*.{svg,jpg,webp}`)
     .pipe(gulp.dest(`${config.dest.img}`))
 );
+gulp.task('copyfiles-imgmap', () =>
+  gulp
+    .src(`${config.src.imgMap}*.{jpg,webp}`)
+    .pipe(gulp.dest(`${config.dest.imgMap}`))
+);
 gulp.task('copyfiles-img', () =>
   gulp
-    .src(`${config.src.imgRest}*.{svg,jpg,webp}`)
+    .src(`${config.src.imgRest}*.{jpg,webp}`)
     .pipe(gulp.dest(`${config.dest.imgRest}`))
 );
 

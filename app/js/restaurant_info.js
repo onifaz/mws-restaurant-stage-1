@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', event => {
       console.error(error);
     }
   });
+  if (window.innerWidth >= 992) {
+    const mapBtn = document.getElementById('map').getElementsByTagName('a')[0];
+    mapBtn.click();
+  }
 });
 
 /**
@@ -19,8 +23,22 @@ window.initDetailMap = () => {
       center: self.restaurant.latlng,
       scrollwheel: false
     });
-    DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
+    //updateRestaurants();
+    if (typeof google === 'object' && typeof google.maps === 'object')
+      DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
   }
+};
+/**
+ * Add google map only on request of interactivity
+ */
+addGmapDetail = () => {
+  document
+    .getElementById('map-container')
+    .setAttribute('class', 'map--requested');
+  const script = document.createElement('script');
+  script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBN-_N7NAK_k8QKsoHe6pd4M8aIhA1HX6E&libraries=places&callback=initDetailMap`;
+  script.type = 'text/javascript';
+  document.body.appendChild(script);
 };
 
 /**
