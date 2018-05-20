@@ -54,10 +54,10 @@
           <a onClick="addGmapMain()">See restaurants on the map</a>
         </span>
         <picture>
-          <source sizes="100vw" type="image/webp" srcset="img/map/map-340.webp 340w, img/map/map-560.webp 560w,img/map/map-768.webp 768w, img/map/map-1200.webp 1200w, img/map/map-1920.webp 1920w, img/map/map-2560.webp 2560w">
-          <source sizes="100vw" srcset="img/map/map-340.jpg 340w, img/map/map-560.jpg 560w, img/map/map-768.jpg 768w,
+          <source sizes="100vw" type="image/webp" data-srcset="img/map/map-340.webp 340w, img/map/map-560.webp 560w,img/map/map-768.webp 768w, img/map/map-1200.webp 1200w, img/map/map-1920.webp 1920w, img/map/map-2560.webp 2560w">
+          <source sizes="100vw" data-srcset="img/map/map-340.jpg 340w, img/map/map-560.jpg 560w, img/map/map-768.jpg 768w,
             img/map/map-1200.jpg 1200w, img/map/map-1920.jpg 1920w, img/map/map-2560.jpg 2560w">
-          <img class="map-imagePlaceholder" src="img/map/map-768.jpg" alt="">
+          <img class="map-imagePlaceholder" data-src="img/map/map-768.jpg" alt="">
         </picture>
       </div>
     </section>
@@ -86,6 +86,8 @@
   <script type="application/javascript" src="js/idb.js"></script>
   <!-- Database helpers -->
   <script type="application/javascript" src="js/dbhelper.js"></script>
+  <!-- Intersection observer lazy load -->
+  <script type="application/javascript" charset="utf-8" src="js/observer.js"></script>
   <!-- Register service worker -->
   <script type="application/javascript" charset="utf-8" src="js/swregister.js"></script>
   <!-- endbuild -->

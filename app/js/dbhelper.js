@@ -279,14 +279,18 @@ class DBHelper {
    * Error image
    */
   static imageErrorForRestaurant(restaurant) {
+    const div = document.createElement('div');
     const image = document.createElement('img');
+    div.className = 'restimage-wrap';
     image.className = 'restaurant-img';
-    image.src = 'img/no-image-available.svg';
+    //image.src = 'img/no-image-available.svg';
+    image.setAttribute('data-src', 'img/no-image-available.svg');
     image.setAttribute(
       'alt',
       'No photo available for ' + restaurant.name + ' restaurant'
     );
-    return image;
+    div.append(image);
+    return div;
   }
 
   /**
@@ -297,21 +301,33 @@ class DBHelper {
     const sourcew = document.createElement('source');
     sourcew.setAttribute('sizes', sizes);
     sourcew.setAttribute('type', 'image/webp');
-    sourcew.setAttribute(
+    /*sourcew.setAttribute(
       'srcset',
+      DBHelper.imageSrcsetForRestaurant(restaurant.photograph, 'webp')
+    );*/
+    sourcew.setAttribute(
+      'data-srcset',
       DBHelper.imageSrcsetForRestaurant(restaurant.photograph, 'webp')
     );
     picture.append(sourcew);
     const sourcej = document.createElement('source');
     sourcej.setAttribute('sizes', sizes);
-    sourcej.setAttribute(
+    /*sourcej.setAttribute(
       'srcset',
+      DBHelper.imageSrcsetForRestaurant(restaurant.photograph, 'jpg')
+    );*/
+    sourcej.setAttribute(
+      'data-srcset',
       DBHelper.imageSrcsetForRestaurant(restaurant.photograph, 'jpg')
     );
     picture.append(sourcej);
     const image = document.createElement('img');
     image.className = 'restaurant-img';
-    image.src = `img/restaurants/${restaurant.photograph}.jpg`;
+    //image.src = `img/restaurants/${restaurant.photograph}.jpg`;
+    image.setAttribute(
+      'data-src',
+      `img/restaurants/${restaurant.photograph}.jpg`
+    );
     image.setAttribute('alt', 'Photo of ' + restaurant.name + ' restaurant');
     picture.append(image);
     return picture;

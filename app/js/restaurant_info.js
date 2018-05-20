@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', event => {
   });
   if (window.innerWidth >= 992) {
     const mapBtn = document.getElementById('map').getElementsByTagName('a')[0];
-    mapBtn.click();
+    window.setTimeout(mapBtn.click(), 250);
   }
 });
 
@@ -65,6 +65,7 @@ fetchRestaurantFromURL = callback => {
       document.title = self.restaurant.name + ' Restaurant Info';
       fillBreadcrumb();
       fillRestaurantHTML();
+      lazyload();
       callback(null, restaurant);
     });
   }

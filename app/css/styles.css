@@ -448,17 +448,45 @@ div .map---placeholder a {
   background-color: #fff;
   box-shadow: 0 5px 10px rgba(0, 0, 0, .15);
 }
-#restaurants-list .restaurant-img img {
+picture source {
+  position: absolute;
+  top: 0;
+}
+#restaurants-list .restimage-wrap,
+#restaurants-list picture,
+#restaurant-img .restimage-wrap,
+#restaurant-img picture {
+  position: relative;
+
+  display: block;
+
+  background-color: #eee;
+}
+#restaurants-list .restimage-wrap:before,
+#restaurants-list picture:before,
+#restaurant-img .restimage-wrap:before,
+#restaurant-img picture:before {
+  display: block;
+
+  width: 100%;
+  padding-top: 75%;
+
+  content: '';
+}
+
+#restaurants-list img,
+#restaurant-img img {
+  position: absolute;
+  top: 0;
+
   display: block;
 
   width: 100%;
   max-width: 100%;
   height: auto;
   margin: 0;
-
-  background-color: #eee;
 }
-#restaurants-list li div {
+#restaurants-list div.rest-info {
   display: flex;
   flex-direction: column;
 
@@ -581,7 +609,6 @@ div .map---placeholder a {
   color: #fff;
   background: #283593;
 }
-#restaurant-img,
 .restaurant-img {
   display: block;
 

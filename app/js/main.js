@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', event => {
   fetchNeighborhoods();
   fetchCuisines();
   updateRestaurants();
+  lazyload();
 });
 
 /**
@@ -121,6 +122,7 @@ updateRestaurants = () => {
       } else {
         resetRestaurants(restaurants);
         fillRestaurantsHTML();
+        lazyload();
       }
     }
   );
@@ -161,6 +163,7 @@ createRestaurantHTML = restaurant => {
   const article = document.createElement('article');
   article.setAttribute('role', 'article');
   const div = document.createElement('div');
+  div.setAttribute('class', 'rest-info');
 
   const image = DBHelper.imageUrlForRestaurants(restaurant);
   article.append(image);
