@@ -8,6 +8,7 @@ const urlsToCache = [
   '/css/styles.css',
   '/js/idb.js',
   '/js/dbhelper.js',
+  'js/observer.js',
   '/js/main.js',
   '/js/restaurant_info.js',
   '/js/swregister.js'

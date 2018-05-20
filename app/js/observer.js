@@ -22,7 +22,7 @@ let onIntersection = elements => {
     }
   });
 };
-let lazyload = () => {
+function lazyload() {
   const images = window.document.querySelectorAll('source, img');
   if (!('IntersectionObserver' in window)) {
     console.log('Intersection Observer not found :(');
@@ -34,4 +34,4 @@ let lazyload = () => {
       observer.observe(image);
     });
   }
-};
+}

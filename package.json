@@ -5,7 +5,7 @@
   "main": "gulpfile.js",
   "scripts": {
     "clean": "rm -rf node_modules",
-    "cleandist": "rm -rf dist"
+    "cleandist": "rm -rf dist && rm -rf temp"
   },
   "repository": {
     "type": "git",

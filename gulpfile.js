@@ -11,7 +11,8 @@ const gulp = require('gulp'),
   rename = require('gulp-rename'),
   imagemin = require('gulp-imagemin'),
   imageresize = require('gulp-image-resize'),
-  imagewebp = require('gulp-webp');
+  imagewebp = require('gulp-webp'),
+  critical = require('critical');
 
 /** saving all paths in one obj */
 const config = {
@@ -118,14 +119,7 @@ gulp.task('copyfiles-img', () =>
 );
 
 /** gzip all zippable resourses */
-gulp.task('gzip', [
-  'gzip-main',
-  'gzip-icons',
-  'gzip-js',
-  'gzip-sw',
-  'gzip-css',
-  'gzip-html'
-]);
+gulp.task('gzip', ['gzip-main', 'gzip-icons', 'gzip-js', 'gzip-sw']);
 gulp.task('gzip-main', ['copyfiles'], () =>
   gulp
     .src(`${config.dest.img}*.svg`)
@@ -156,12 +150,67 @@ gulp.task('gzip-sw', ['copyfiles-sw'], () =>
     .pipe(gzip())
     .pipe(gulp.dest(`${config.dest.main}`))
 );
-gulp.task('gzip-html', ['minifyhtml'], () =>
+gulp.task('gzip-html', () =>
   gulp
     .src(`${config.dest.main}*.html`)
     .pipe(gzip())
     .pipe(gulp.dest(`${config.dest.main}`))
 );
+
+/** critical css */
+gulp.task('criticalMain', ['minifyhtml'], function(cb) {
+  critical.generate({
+    inline: true,
+    base: 'temp',
+    src: 'index.html',
+    css: ['dist/css/styles.css'],
+    dimensions: [
+      {
+        width: 320,
+        height: 480
+      },
+      {
+        width: 768,
+        height: 1024
+      },
+      {
+        width: 1280,
+        height: 960
+      }
+    ],
+    dest: '../dist/index.html',
+    minify: true,
+    extract: true,
+    ignore: ['font-face']
+  });
+});
+gulp.task('criticalDetail', ['minifyhtml'], function(cb) {
+  critical.generate({
+    inline: true,
+    base: 'temp',
+    src: 'restaurant.html',
+    css: ['dist/css/styles.css'],
+    dimensions: [
+      {
+        width: 320,
+        height: 480
+      },
+      {
+        width: 768,
+        height: 1024
+      },
+      {
+        width: 1280,
+        height: 960
+      }
+    ],
+    dest: '../dist/restaurant.html',
+    minify: true,
+    extract: true,
+    ignore: ['font-face']
+  });
+});
+gulp.task('critical', ['criticalMain', 'criticalDetail']);
 
 /** Copy and optimize icons */
 gulp.task('icons', () =>
@@ -176,13 +225,14 @@ gulp.task('minifyjs', ['bundlejs', 'mainjs']);
 /** bundle js */
 gulp.task('bundlejs', () =>
   gulp
-    .src(`${config.src.js}{idb.js,dbhelper.js,swregister.js}`)
+    .src(`${config.src.js}{idb.js,dbhelper.js,observer.js,swregister.js}`)
     .pipe(sourcemaps.init())
     .pipe(
       order(
         [
           `${config.src.js}idb.js`,
           `${config.src.js}dbhelper.js`,
+          `${config.src.js}observer.js`,
           `${config.src.js}swregister.js`
         ],
         { base: __dirname }
@@ -226,21 +276,9 @@ gulp.task('minifyhtml', () =>
       })
     )
     .pipe(htmlmin({ collapseWhitespace: true, removeComments: true }))
-    .pipe(gulp.dest(`${config.dest.main}`))
+    .pipe(gulp.dest('temp'))
 );
 
 /** create dist folder content */
-gulp.task('build-dist', ['copyfiles', 'icons', 'gzip']);
-
-/*
-critical css
-var log = require('fancy-log');
-var critical = require('critical').stream;
-// Generate & Inline Critical-path CSS
-gulp.task('critical', function () {
-    return gulp.src('dist/*.html')
-        .pipe(critical({base: 'dist/', inline: true, css: ['dist/styles/components.css','dist/styles/main.css']}))
-        .on('error', function(err) { log.error(err.message); })
-        .pipe(gulp.dest('dist'));
-});
-*/
+gulp.task('prepare-dist', ['copyfiles', 'icons', 'gzip', 'critical']);
+gulp.task('build-dist', ['gzip-html', 'gzip-css']);
