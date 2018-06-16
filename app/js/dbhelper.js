@@ -2,16 +2,6 @@
  * Common database helper functions.
  */
 class DBHelper {
-  // TODO: DELETE OLD – stage1 - CODE
-  /**
-   * Database URL. -> NO MORE! now from REST_URL!
-   * Change this to restaurants.json file location on your server.
-   */
-  /* static get DATABASE_URL() {
-    const port = 8000; // Change this to your server port
-    return `http://localhost:${port}/data/restaurants.json`;
-  } */
-
   /**
    * REST Api URL -> Pointing to mws-restaurant-page-2 server
    * Change this to the URL of your server.
@@ -41,6 +31,13 @@ class DBHelper {
   }
 
   /**
+   * iDB store name for reviews
+   */
+  static get IDB_STORE_REVIEWS() {
+    return 'reviews';
+  }
+
+  /**
    * Get indexDB (better -> get IDB but promised)
    */
   static openIDB() {
@@ -50,14 +47,20 @@ class DBHelper {
       return Promise.resolve();
     }
     return idb.open(DBHelper.IDB_NAME, DBHelper.IDB_VERSION, upgradeDb => {
-      var storeRestaurants = upgradeDb.createObjectStore(
+      const storeRestaurants = upgradeDb.createObjectStore(
         DBHelper.IDB_STORE_RESTAURANTS,
         {
           keyPath: 'id',
           autoIncrement: true
         }
       );
-      //store.createIndex('by-date', 'time'); //TODO: delete wittr example code
+      const storeReviews = upgradeDb.createObjectStore(
+        DBHelper.IDB_STORE_REVIEWS,
+        {
+          keyPath: 'id',
+          autoIncrement: true
+        }
+      );
     });
   }
 
@@ -65,22 +68,6 @@ class DBHelper {
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    // TODO: DELETE OLD – stage1 - CODE
-    // let xhr = new XMLHttpRequest();
-    // xhr.open('GET', DBHelper.DATABASE_URL);
-    // xhr.onload = () => {
-    //   if (xhr.status === 200) {
-    //     // Got a success response from server!
-    //     const json = JSON.parse(xhr.responseText);
-    //     const restaurants = json.restaurants;
-    //     callback(null, restaurants);
-    //   } else {
-    //     // Oops!. Got an error from server.
-    //     const error = `Request failed. Returned status of ${xhr.status}`;
-    //     callback(error, null);
-    //   }
-    // };
-    // xhr.send();
     DBHelper.openIDB()
       .then(db => {
         if (!db) return;
@@ -352,5 +339,70 @@ class DBHelper {
       animation: google.maps.Animation.DROP
     });
     return marker;
+  }
+
+  /**
+   * Retrieve review per specific restaurant id
+   */
+  static fetchReviewsForRestaurant(id, callback) {
+    DBHelper.openIDB()
+      .then(db => {
+        if (!db) return;
+        return db
+          .transaction(DBHelper.IDB_STORE_REVIEWS)
+          .objectStore(DBHelper.IDB_STORE_REVIEWS)
+          .getAll();
+      })
+      .then(idb_data => {
+        id = parseInt(id); //for strict comparison
+        idb_data = idb_data.filter(r => r.restaurant_id === id);
+        if (idb_data && idb_data.length > 0) {
+          console.log('fromIDB');
+          return callback(null, idb_data);
+        } else {
+          console.log('fromAPI');
+          fetch(DBHelper.REST_URL + 'reviews/?restaurant_id=' + id)
+            .then(response => {
+              //if restaurants are fetched, parse the JSON response
+              return response.json();
+            })
+            .then(reviews => {
+              //save restaurants in db and serve the downloaded response
+              DBHelper.openIDB().then(db => {
+                if (!db) return;
+                const store = db
+                  .transaction(DBHelper.IDB_STORE_REVIEWS, 'readwrite')
+                  .objectStore(DBHelper.IDB_STORE_REVIEWS);
+                reviews.forEach(function(review) {
+                  store.put(review);
+                });
+              });
+              return callback(null, reviews);
+            })
+            .catch(err => {
+              //console.error('Request failed. Returned status of', err);
+              console.error('Request failed');
+              return callback(err, null);
+            });
+        }
+      });
+  }
+  /**
+   * Fetch reviews by restaurant id
+   */
+  static fetchReviewsByRestaurantId(id, callback) {
+    DBHelper.fetchReviewsForRestaurant(id, (error, reviews) => {
+      if (error) callback(error, null);
+      else {
+        const reviewsList = reviews;
+        if (reviewsList) {
+          // Got the reviews
+          callback(null, reviewsList);
+        } else {
+          // Couldn't find reviews in the database
+          callback('Reviews do not exist', null);
+        }
+      }
+    });
   }
 }
