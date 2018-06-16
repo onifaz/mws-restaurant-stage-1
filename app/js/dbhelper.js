@@ -354,7 +354,7 @@ class DBHelper {
           .getAll();
       })
       .then(idb_data => {
-        id = parseInt(id); //for strict comparison
+        id = parseInt(id); //for next strict comparison
         idb_data = idb_data.filter(r => r.restaurant_id === id);
         if (idb_data && idb_data.length > 0) {
           console.log('fromIDB');
