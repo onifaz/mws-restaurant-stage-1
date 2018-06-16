@@ -577,7 +577,7 @@ picture source {
 }
 #restaurant-container,
 #reviews-container {
-  padding: 30px 15px 20px;
+  padding: 30px 15px;
 
   border-top: 1px solid #fff;
   border-bottom: 1px solid #d9d9d9;
@@ -674,6 +674,11 @@ table td {
   padding: 0 15px 1.5em;
 
   color: #9f1d19;
+}
+.review--notfound {
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 0 15px 10px;
 }
 .reviews-list {
   margin: 0;
@@ -784,9 +789,6 @@ p.review--comment {
   #restaurant-container {
     padding-top: 125px;
   }
-  #reviews-container {
-    padding-bottom: 80px;
-  }
   .inside #footer {
     position: absolute;
     bottom: 0;
@@ -828,6 +830,9 @@ p.review--comment {
   }
   #reviews-container h2 {
     padding: 0 30px 1em;
+  }
+  .review--notfound {
+    padding: 0 30px 15px;
   }
   .review--author {
     min-width: 21rem;

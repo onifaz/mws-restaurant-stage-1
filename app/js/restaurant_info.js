@@ -149,6 +149,9 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
 
   if (!reviews) {
     const noReviews = document.createElement('p');
+    const emptyList = document.getElementById('reviews-list');
+    container.removeChild(emptyList);
+    noReviews.setAttribute('class', 'review--notfound');
     noReviews.innerHTML = 'No reviews yet!';
     container.appendChild(noReviews);
     return;
