@@ -70,7 +70,6 @@ fetchRestaurantFromURL = callback => {
     });
   }
 };
-
 /**
  * Create restaurant HTML and add it to the webpage
  */
@@ -94,7 +93,35 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
-  fillReviewsHTML();
+  //fillReviewsHTML();
+  fetchReviews();
+};
+
+/**
+ * Get current restaurant from page URL.
+ */
+fetchReviews = callback => {
+  if (self.restaurant.reviews) {
+    // reviews already fetched!
+    fillReviewsHTML();
+    return;
+  }
+  const id = getParameterByName('id');
+  if (!id) {
+    // no id found in URL
+    error = 'No restaurant id in URL';
+    callback(error, null);
+  } else {
+    DBHelper.fetchReviewsByRestaurantId(id, (error, reviews) => {
+      self.restaurant.reviews = reviews;
+      if (!reviews) {
+        console.error(error);
+        fillErrorReviewsHTML();
+        return;
+      }
+      fillReviewsHTML();
+    });
+  }
 };
 
 /**
@@ -149,8 +176,8 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
 
   if (!reviews) {
     const noReviews = document.createElement('p');
-    const emptyList = document.getElementById('reviews-list');
-    container.removeChild(emptyList);
+    // const emptyList = document.getElementById('reviews-list');
+    // container.removeChild(emptyList);
     noReviews.setAttribute('class', 'review--notfound');
     noReviews.innerHTML = 'No reviews yet!';
     container.appendChild(noReviews);
@@ -163,6 +190,21 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   });
 
   container.appendChild(ul);
+};
+fillErrorReviewsHTML = () => {
+  const container = document.getElementById('reviews-container');
+  const title = document.createElement('h2');
+  title.innerHTML = 'Reviews';
+  title.setAttribute('id', 'reviews-title');
+  container.appendChild(title);
+  const noReviews = document.createElement('p');
+  // const emptyList = document.getElementById('reviews-list');
+  // container.removeChild(emptyList);
+  noReviews.setAttribute('class', 'review--notfound');
+  noReviews.innerHTML =
+    'There are no older reviews to show: try again when online';
+  container.appendChild(noReviews);
+  return;
 };
 
 /**
