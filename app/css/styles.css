@@ -441,7 +441,11 @@ div .map---placeholder a {
   text-align: left;
 }
 #restaurants-list li article {
+  display: flex;
+  flex-direction: column;
+
   max-width: 420px;
+  height: 100%;
   margin: 0 auto;
 
   border-bottom: 3px solid #e53935;
@@ -486,11 +490,10 @@ picture source {
   height: auto;
   margin: 0;
 }
-#restaurants-list div.rest-info {
+#restaurants-list .rest-info {
   display: flex;
   flex-direction: column;
 
-  min-height: 206px;
   padding: 0 30px 30px;
 }
 #restaurants-list li h2 {
@@ -510,6 +513,8 @@ picture source {
 
 #restaurants-list .address {
   font-size: .875rem;
+
+  padding: 0 0 1.4em;
 
   color: #595858;
 }
@@ -548,9 +553,6 @@ picture source {
 @media screen and (min-width: 990px) {
   #restaurants-list li {
     width: 33.333%;
-  }
-  #restaurants-list li div {
-    min-height: 224px;
   }
 }
 @media screen and (min-width: 1780px) {
@@ -693,6 +695,34 @@ table td {
 
   list-style-type: none;
 }
+.reviews-list article {
+  position: relative;
+  z-index: 2;
+}
+.reviews-list li article:after {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  content: '';
+  -webkit-transition: opacity .25s ease-in-out 0s;
+          transition: opacity .25s ease-in-out 0s;
+
+  opacity: 0;
+  -webkit-box-shadow: 0 0 30px 1px rgba(230, 57, 53, .5);
+          box-shadow: 0 0 30px 1px rgba(230, 57, 53, .5);
+}
+.reviews-list li.added article:after {
+  -webkit-transition: opacity .25s ease-in-out .5s;
+          transition: opacity .25s ease-in-out .5s;
+
+  opacity: 1;
+}
 .reviews-list p {
   margin: 0;
 }
@@ -750,6 +780,10 @@ p.review--comment {
   border-top: 1px solid #eee;
 }
 
+#new-review {
+  padding-bottom: 60px;
+}
+
 @media screen and (min-width: 460px) {
   .review--head {
     float: left;
@@ -783,11 +817,15 @@ p.review--comment {
     max-height: 100%;
   }
   #restaurant-container,
-  #reviews-container {
+  #reviews-container,
+  #new-review {
     width: 50%;
   }
   #restaurant-container {
     padding-top: 125px;
+  }
+  #new-review {
+    padding-bottom: 128px;
   }
   .inside #footer {
     position: absolute;
