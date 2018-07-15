@@ -7,10 +7,17 @@ document.addEventListener('DOMContentLoaded', event => {
       console.error(error);
     }
   });
+  document
+    .getElementById('show-map')
+    .addEventListener('click', addGmapDetail, true);
+  document
+    .getElementById('new-review-form')
+    .addEventListener('submit', submitReview);
   if (window.innerWidth >= 992) {
-    const mapBtn = document.getElementById('map').getElementsByTagName('a')[0];
+    const mapBtn = document.getElementById('show-map');
     window.setTimeout(mapBtn.click(), 250);
   }
+  //no need for if (el.attachEvent) {el.attachEvent('onsubmit', modifyText)} since we are also using arrow functions, so no IE11
 });
 
 /**
@@ -60,6 +67,8 @@ fetchRestaurantFromURL = callback => {
       self.restaurant = restaurant;
       if (!restaurant) {
         console.error(error);
+        const newReview = document.getElementById('new-review');
+        newReview.parentNode.removeChild(newReview);
         return;
       }
       document.title = self.restaurant.name + ' Restaurant Info';
@@ -76,6 +85,14 @@ fetchRestaurantFromURL = callback => {
 fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
+
+  const favoriteBtn = document.getElementById('favorite-button');
+  if (restaurant.is_favorite == 'true') {
+    setFavoriteButton(favoriteBtn, 'true');
+  }
+  favoriteBtn.addEventListener('click', event => {
+    favoriteRestaurant(event.target, restaurant);
+  });
 
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
@@ -95,6 +112,32 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   // fill reviews
   //fillReviewsHTML();
   fetchReviews();
+};
+
+/*
+ * Set status (text and class) for favorite button
+ */
+setFavoriteButton = (target, status) => {
+  if (status === 'true') {
+    target.classList.add('is-favorite');
+    target.innerHTML = '&#9733; Favorite';
+  } else {
+    target.classList.remove('is-favorite');
+    target.innerHTML = '&#9734; Add to favorite';
+  }
+};
+
+/*
+ * Restaurant function add-to or remove-from favorites
+ */
+favoriteRestaurant = (target, restaurant) => {
+  if (target.className.indexOf('is-favorite') > -1) {
+    setFavoriteButton(target, 'false');
+    DBHelper.favoriteRestaurant(restaurant, 'false');
+  } else {
+    setFavoriteButton(target, 'true');
+    DBHelper.favoriteRestaurant(restaurant, 'true');
+  }
 };
 
 /**
@@ -170,6 +213,7 @@ fillRestaurantHoursHTML = (
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h2');
+
   title.innerHTML = 'Reviews';
   title.setAttribute('id', 'reviews-title');
   container.appendChild(title);
@@ -183,6 +227,9 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
     container.appendChild(noReviews);
     return;
   }
+
+  //latest on top, "TripAdvisor" mode
+  reviews.sort((ar1, ar2) => ar2.createdAt - ar1.createdAt);
 
   const ul = document.getElementById('reviews-list');
   reviews.forEach(review => {
@@ -289,4 +336,139 @@ getParameterByName = (name, url) => {
   if (!results) return null;
   if (!results[2]) return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+};
+
+/**
+ * Escaping user input, from:
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+ */
+escapeRegExp = string => {
+  //return string.replace(/[*+^${}()<>|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  return string.replace(/[*+^${}()<>|[\]\\]/g, ' ');
+};
+
+/**
+ * Verify and submit review
+ */
+submitReview = event => {
+  let review,
+    reviewHtml,
+    form_button = document.getElementById('new-review--submit'),
+    form_name = document.getElementById('new-review--name'),
+    form_comment = document.getElementById('new-review--comment'),
+    form_rating = document.getElementById('new-review--rating'),
+    form_stars = form_rating.value,
+    form_messageArea = document.getElementById('new-review--msg'),
+    reviewList = document.getElementById('reviews-list'),
+    errorMessage = '';
+
+  const check_nameEmpty = '<li>Your name couldn&apos;t be empty</li>',
+    check_nameShort =
+      '<li>Your name is too short (please provide at least 3 characters)</li>',
+    check_commentEmpty = '<li>Your review couldn&apos;t be empty</li>',
+    check_commentShort =
+      '<li>Your review is too short <em>(at least 100 characters comment is requested)</em></li>',
+    check_noRating = '<li>Rating is not set</li>';
+
+  event.preventDefault();
+  resetMessage(form_messageArea);
+  form_button.disabled = true;
+  if (!form_name.value)
+    errorMessage += (errorMessage ? '<br/>' : '<ul>') + check_nameEmpty;
+
+  if (form_name.value.length < 2)
+    errorMessage += (errorMessage ? '<br/>' : '<ul>') + check_nameShort;
+
+  if (!form_comment.value)
+    errorMessage += (errorMessage ? '<br/>' : '<ul>') + check_commentEmpty;
+
+  if (form_comment.value.length < 100)
+    errorMessage += (errorMessage ? '<br/>' : '<ul>') + check_commentShort;
+
+  if (form_stars === 'none')
+    errorMessage += (errorMessage ? '<br/>' : '<ul>') + check_noRating;
+
+  if (errorMessage) {
+    errorMessage += '</ul>';
+    form_messageArea.innerHTML = errorMessage;
+    form_messageArea.setAttribute('class', 'error');
+    form_messageArea.style.display = 'block';
+    form_button.disabled = false;
+  } else {
+    form_messageArea.classList.add('success');
+    // Assing values to review object
+    review = {
+      restaurant_id: self.restaurant.id,
+      name: escapeRegExp(form_name.value),
+      rating: parseInt(form_stars),
+      comments: escapeRegExp(form_comment.value)
+    };
+    // add review to local and remote db
+    DBHelper.saveReview(review).then(review => {
+      // create new review DOM node
+      reviewHtml = createReviewHTML(review);
+      // clean fields in form
+      form_name.value = '';
+      form_comment.value = '';
+      form_rating.selectedIndex = 0;
+      // success message
+      setTimeout(_ => {
+        reviewHtml.setAttribute('class', 'added');
+        if (reviewList.firstChild) {
+          reviewList.insertBefore(reviewHtml, reviewList.firstChild);
+        } else {
+          reviewList.appendChild(reviewHtml);
+        }
+        form_messageArea.setAttribute('class', 'success');
+        form_messageArea.style.display = 'block';
+        form_button.disabled = false;
+        smoothScrollTo('reviews-container', 650, 100);
+        reviewHtml.firstChild.focus();
+      }, 250);
+      setTimeout(_ => {
+        resetMessage(form_messageArea);
+        reviewHtml.setAttribute('class', '');
+        form_button.disabled = false;
+      }, 7500);
+    });
+  }
+};
+
+/**
+ * reset form message area
+ */
+resetMessage = message => {
+  message.style.display = 'none';
+  message.classList.remove('success', 'error');
+  message.innerHTML = '';
+};
+
+/**
+ * Easing function
+ */
+easeInOutQuart = (time, from, distance, duration) => {
+  if ((time /= duration / 2) < 1)
+    return (distance / 2) * time * time * time * time + from;
+  return (-distance / 2) * ((time -= 2) * time * time * time - 2) + from;
+};
+/**
+ * smooth scroll animation
+ * remix version of iwazaru's gist
+ * @orginal: https://gist.github.com/iwazaru/4c8819420ce5237aeaf338339df25c32
+ * @param {int} endX: destination x coordinate
+ * @param {int} duration: animation duration in ms
+ */
+window.smoothScrollTo = (targetID, duration = 400, delta = 0) => {
+  let startY = window.scrollY || window.pageYOffset,
+    element = document.getElementById(targetID),
+    endY = element.offsetTop - element.scrollTop + element.clientTop - delta;
+  (distanceY = endY - startY), (startTime = new Date().getTime());
+  let timer = window.setInterval(function() {
+    let time = new Date().getTime() - startTime,
+      newY = easeInOutQuart(time, startY, distanceY, duration);
+    if (time >= duration) {
+      window.clearInterval(timer);
+    }
+    window.scrollTo(0, newY);
+  }, 1000 / 60); // 60 fps
 };

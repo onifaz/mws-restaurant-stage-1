@@ -21,7 +21,7 @@ class DBHelper {
    * iDB version
    */
   static get IDB_VERSION() {
-    return 1;
+    return 2;
   }
   /**
    * iDB store name for restaurants
@@ -54,6 +54,9 @@ class DBHelper {
           autoIncrement: true
         }
       );
+      storeRestaurants.createIndex('pending-upload', 'pendingUpload', {
+        unique: false
+      });
       const storeReviews = upgradeDb.createObjectStore(
         DBHelper.IDB_STORE_REVIEWS,
         {
@@ -61,6 +64,9 @@ class DBHelper {
           autoIncrement: true
         }
       );
+      storeReviews.createIndex('pending-upload', 'pendingUpload', {
+        unique: false
+      });
     });
   }
 
@@ -98,7 +104,7 @@ class DBHelper {
               return callback(null, restaurants);
             })
             .catch(err => {
-              console.log('Request failed. Returned status of', err);
+              console.warn('Request failed. Returned status of', err);
             });
         }
       });
@@ -357,10 +363,10 @@ class DBHelper {
         id = parseInt(id); //for next strict comparison
         idb_data = idb_data.filter(r => r.restaurant_id === id);
         if (idb_data && idb_data.length > 0) {
-          console.log('fromIDB');
+          console.info('Reviews served from IDB');
           return callback(null, idb_data);
         } else {
-          console.log('fromAPI');
+          console.info('Reviews fetched from online server');
           fetch(DBHelper.REST_URL + 'reviews/?restaurant_id=' + id)
             .then(response => {
               //if restaurants are fetched, parse the JSON response
@@ -374,6 +380,8 @@ class DBHelper {
                   .transaction(DBHelper.IDB_STORE_REVIEWS, 'readwrite')
                   .objectStore(DBHelper.IDB_STORE_REVIEWS);
                 reviews.forEach(function(review) {
+                  review.createdAt = new Date(review.createdAt).valueOf();
+                  review.updatedAt = new Date(review.updatedAt).valueOf();
                   store.put(review);
                 });
               });
@@ -381,7 +389,7 @@ class DBHelper {
             })
             .catch(err => {
               //console.error('Request failed. Returned status of', err);
-              console.error('Request failed');
+              console.warn('Request failed');
               return callback(err, null);
             });
         }
@@ -403,6 +411,99 @@ class DBHelper {
           callback('Reviews do not exist', null);
         }
       }
+    });
+  }
+  /**
+   * Send the review to the server and also save it in db
+   */
+  static saveReview(review) {
+    if (!review) return;
+    console.log(review.hasOwnProperty('id'));
+    return fetch(DBHelper.REST_URL + 'reviews', {
+      method: 'POST',
+      body: JSON.stringify(review)
+    })
+      .then(response => {
+        review.pendingUpload = 'no';
+        return response.json();
+      })
+      .then(server_response => {
+        review = server_response;
+        //uniform date with old reviews
+        review.createdAt = new Date(review.createdAt).valueOf();
+        review.updatedAt = new Date(review.updatedAt).valueOf();
+        return DBHelper.insertReviewIDB(review);
+      })
+      .catch(err => {
+        console.warn('Post review request failed. Error: ', err);
+        review.pendingUpload = 'yes';
+        //insert temporary idb record
+        return DBHelper.insertReviewIDB(review, _ => {
+          console.warn('Pending review record inserted in IDB - ', review);
+        });
+      });
+  }
+  /**
+   * Add review to IDB
+   */
+  static insertReviewIDB(review, callback) {
+    return DBHelper.openIDB()
+      .then(db => {
+        if (!db) return;
+        const tx = db
+          .transaction(DBHelper.IDB_STORE_REVIEWS, 'readwrite')
+          .objectStore(DBHelper.IDB_STORE_REVIEWS)
+          .put(review);
+        return tx.complete;
+      })
+      .then(_ => {
+        typeof callback === 'function' && callback();
+        return review;
+      })
+      .catch(err => {
+        console.warn('Add review in IDB failed. Error:', err);
+      });
+  }
+
+  /**
+   * Add review to IDB
+   */
+  static favoriteRestaurant(restaurant, state) {
+    if (!restaurant) return;
+    restaurant.is_favorite = state;
+    fetch(
+      DBHelper.REST_URL +
+        'restaurants/' +
+        restaurant.id +
+        '/?is_favorite=' +
+        state,
+      {
+        method: 'PUT'
+      }
+    )
+      .then(response => {
+        restaurant.pendingUpload = 'no';
+        DBHelper.updateRestaurantInDb(restaurant);
+      })
+      .catch(err => {
+        console.warn('Post favorite request failed. Error: ', err);
+        restaurant.pendingUpload = 'yes';
+        //insert temporary idb record
+        DBHelper.updateRestaurantInDb(restaurant, _ => {
+          console.warn('Pending favorite record inserted in IDB - ', review);
+        });
+      });
+  }
+  /**
+   * Update idb restaurant record
+   */
+  static updateRestaurantInDb(restaurant, callback) {
+    DBHelper.openIDB().then(db => {
+      if (!db) return;
+      db.transaction(DBHelper.IDB_STORE_RESTAURANTS, 'readwrite')
+        .objectStore(DBHelper.IDB_STORE_RESTAURANTS)
+        .put(restaurant);
+      if (typeof callback === 'function') callback();
     });
   }
 }
