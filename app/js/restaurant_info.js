@@ -13,11 +13,22 @@ document.addEventListener('DOMContentLoaded', event => {
   document
     .getElementById('new-review-form')
     .addEventListener('submit', submitReview);
+  //no need for if (el.attachEvent) {el.attachEvent('onsubmit', submitReview)} since we are also using arrow functions, so no IE11
   if (window.innerWidth >= 992) {
     const mapBtn = document.getElementById('show-map');
     window.setTimeout(mapBtn.click(), 250);
   }
-  //no need for if (el.attachEvent) {el.attachEvent('onsubmit', modifyText)} since we are also using arrow functions, so no IE11
+
+  // Alternative to SW Background SYNC
+  // if (navigator.onLine) {
+  //   DBHelper.syncAllData();
+  // }
+  // window.addEventListener('online', function() {
+  //   DBHelper.syncAllData();
+  // });
+  // window.addEventListener('offline', function() {
+  //   console.info('It seems we are offline at the moment...');
+  // });
 });
 
 /**
@@ -144,11 +155,6 @@ favoriteRestaurant = (target, restaurant) => {
  * Get current restaurant from page URL.
  */
 fetchReviews = callback => {
-  if (self.restaurant.reviews) {
-    // reviews already fetched!
-    fillReviewsHTML();
-    return;
-  }
   const id = getParameterByName('id');
   if (!id) {
     // no id found in URL
@@ -229,7 +235,12 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   }
 
   //latest on top, "TripAdvisor" mode
-  reviews.sort((ar1, ar2) => ar2.createdAt - ar1.createdAt);
+  function compare(ar1, ar2) {
+    if (ar1.createdAt < ar2.createdAt) return 1;
+    if (ar1.createdAt > ar2.createdAt) return -1;
+    return 0;
+  }
+  reviews.sort(compare);
 
   const ul = document.getElementById('reviews-list');
   reviews.forEach(review => {

@@ -43,12 +43,19 @@ class DBHelper {
   static openIDB() {
     // If the browser doesn't support service worker,
     // we don't care about having a database
-    if (!navigator.serviceWorker) {
+    if (self.window && !navigator.serviceWorker) {
       return Promise.resolve();
     }
-    return idb.open(DBHelper.IDB_NAME, DBHelper.IDB_VERSION, upgradeDb => {
-      const storeRestaurants = upgradeDb.createObjectStore(
+    return idb.open(DBHelper.IDB_NAME, DBHelper.IDB_VERSION, upgrade => {
+      const storeRestaurants = upgrade.createObjectStore(
         DBHelper.IDB_STORE_RESTAURANTS,
+        {
+          keyPath: 'id',
+          autoIncrement: true
+        }
+      );
+      const storeReviews = upgrade.createObjectStore(
+        DBHelper.IDB_STORE_REVIEWS,
         {
           keyPath: 'id',
           autoIncrement: true
@@ -57,13 +64,6 @@ class DBHelper {
       storeRestaurants.createIndex('pending-upload', 'pendingUpload', {
         unique: false
       });
-      const storeReviews = upgradeDb.createObjectStore(
-        DBHelper.IDB_STORE_REVIEWS,
-        {
-          keyPath: 'id',
-          autoIncrement: true
-        }
-      );
       storeReviews.createIndex('pending-upload', 'pendingUpload', {
         unique: false
       });
@@ -373,6 +373,11 @@ class DBHelper {
               return response.json();
             })
             .then(reviews => {
+              // "normalize" date between origina lserver data and newest reviews
+              reviews.forEach(function(review) {
+                review.createdAt = new Date(review.createdAt).valueOf();
+                review.updatedAt = new Date(review.updatedAt).valueOf();
+              });
               //save restaurants in db and serve the downloaded response
               DBHelper.openIDB().then(db => {
                 if (!db) return;
@@ -380,8 +385,6 @@ class DBHelper {
                   .transaction(DBHelper.IDB_STORE_REVIEWS, 'readwrite')
                   .objectStore(DBHelper.IDB_STORE_REVIEWS);
                 reviews.forEach(function(review) {
-                  review.createdAt = new Date(review.createdAt).valueOf();
-                  review.updatedAt = new Date(review.updatedAt).valueOf();
                   store.put(review);
                 });
               });
@@ -424,11 +427,12 @@ class DBHelper {
       body: JSON.stringify(review)
     })
       .then(response => {
-        review.pendingUpload = 'no';
+        //review.pendingUpload = 'no';
         return response.json();
       })
       .then(server_response => {
         review = server_response;
+        //console.table(review);
         //uniform date with old reviews
         review.createdAt = new Date(review.createdAt).valueOf();
         review.updatedAt = new Date(review.updatedAt).valueOf();
@@ -437,6 +441,8 @@ class DBHelper {
       .catch(err => {
         console.warn('Post review request failed. Error: ', err);
         review.pendingUpload = 'yes';
+        review.createdAt = new Date().valueOf();
+        review.updatedAt = new Date().valueOf();
         //insert temporary idb record
         return DBHelper.insertReviewIDB(review, _ => {
           console.warn('Pending review record inserted in IDB - ', review);
@@ -457,7 +463,8 @@ class DBHelper {
         return tx.complete;
       })
       .then(_ => {
-        typeof callback === 'function' && callback();
+        if (typeof callback === 'function') callback();
+        console.log('review added in IDB');
         return review;
       })
       .catch(err => {
@@ -482,7 +489,8 @@ class DBHelper {
       }
     )
       .then(response => {
-        restaurant.pendingUpload = 'no';
+        //console.table(restaurant);
+        //restaurant.pendingUpload = 'no';
         DBHelper.updateRestaurantInDb(restaurant);
       })
       .catch(err => {
@@ -490,7 +498,10 @@ class DBHelper {
         restaurant.pendingUpload = 'yes';
         //insert temporary idb record
         DBHelper.updateRestaurantInDb(restaurant, _ => {
-          console.warn('Pending favorite record inserted in IDB - ', review);
+          console.warn(
+            'Pending favorite record inserted in IDB - ',
+            restaurant.id
+          );
         });
       });
   }
@@ -503,6 +514,67 @@ class DBHelper {
       db.transaction(DBHelper.IDB_STORE_RESTAURANTS, 'readwrite')
         .objectStore(DBHelper.IDB_STORE_RESTAURANTS)
         .put(restaurant);
+      if (typeof callback === 'function') callback();
+    });
+  }
+
+  /**
+   * Sync database data (restaurants & reviews)
+   */
+  static syncAllData() {
+    console.info('Syncing all the data with the server');
+
+    // for restaurants' favorites
+    DBHelper.openIDB()
+      .then(db => {
+        if (!db) return;
+        console.info('Syncing favorites...');
+        return db
+          .transaction(DBHelper.IDB_STORE_RESTAURANTS)
+          .objectStore(DBHelper.IDB_STORE_RESTAURANTS)
+          .index('pending-upload')
+          .openCursor('yes');
+      })
+      .then(function reuploadFavorites(cursor) {
+        if (!cursor) return;
+        let restaurant = cursor.value;
+        delete restaurant.pendingUpload;
+        DBHelper.favoriteRestaurant(restaurant, restaurant.is_favorite);
+        return cursor.continue().then(reuploadFavorites);
+      });
+
+    // for restaurants' reviews
+    DBHelper.openIDB()
+      .then(db => {
+        if (!db) return;
+        console.info('Syncing reviews...');
+        return db
+          .transaction(DBHelper.IDB_STORE_REVIEWS)
+          .objectStore(DBHelper.IDB_STORE_REVIEWS)
+          .index('pending-upload')
+          .openCursor('yes');
+      })
+      .then(function reuploadReview(cursor) {
+        if (!cursor) return;
+        let review = cursor.value;
+        DBHelper.removeReviewIDb(review.id, () => {
+          delete review.pendingUpload;
+          DBHelper.saveReview(review);
+        });
+
+        return cursor.continue().then(reuploadReview);
+      });
+  }
+
+  /**
+   * Delete a review from IDB
+   */
+  static removeReviewIDb(reviewId, callback) {
+    DBHelper.openIDB().then(db => {
+      if (!db) return;
+      db.transaction(DBHelper.IDB_STORE_REVIEWS, 'readwrite')
+        .objectStore(DBHelper.IDB_STORE_REVIEWS)
+        .delete(reviewId);
       if (typeof callback === 'function') callback();
     });
   }

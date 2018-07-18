@@ -1,3 +1,5 @@
+self.importScripts('/js/idb.js', '/js/dbhelper.js');
+
 // code largely inspired by Udacity's Offline Web application course (ud899)
 const cacheMain = 'restareviews-v1';
 const cacheImages = 'restareviewsPhotos-v1';
@@ -82,5 +84,12 @@ self.addEventListener('fetch', function(event) {
           .then(response => response || fetch(event.request))
       );
     }
+  }
+});
+
+// backgroundSync
+self.addEventListener('sync', function(event) {
+  if (event.tag == 'dataSync') {
+    event.waitUntil(DBHelper.syncAllData());
   }
 });

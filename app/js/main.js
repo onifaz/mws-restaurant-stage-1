@@ -9,6 +9,17 @@ document.addEventListener('DOMContentLoaded', event => {
   fetchCuisines();
   updateRestaurants();
   lazyload();
+
+  // Alternative to SW Background SYNC
+  // if (navigator.onLine) {
+  //   DBHelper.syncAllData();
+  // }
+  // window.addEventListener('online', function() {
+  //   DBHelper.syncAllData();
+  // });
+  // window.addEventListener('offline', function() {
+  //   console.info('It seems we are offline at the moment...');
+  // });
 });
 
 /**
