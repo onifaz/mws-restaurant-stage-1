@@ -200,12 +200,47 @@ createRestaurantHTML = restaurant => {
     'View Details for ' + restaurant.name + ' restaurant'
   );
   more.href = DBHelper.urlForRestaurant(restaurant);
-
   div.append(more);
+
+  const favoriteBtn = document.createElement('button');
+  favoriteBtn.setAttribute('class', 'favorite-button');
+  const status = restaurant.is_favorite == 'true' ? 'true' : 'false';
+  setFavoriteButton(favoriteBtn, status);
+  favoriteBtn.addEventListener('click', event => {
+    favoriteRestaurant(event.target, restaurant);
+  });
+  div.append(favoriteBtn);
+
   article.append(div);
   li.append(article);
 
   return li;
+};
+
+/*
+ * Set status (text and class) for favorite button
+ */
+setFavoriteButton = (target, status) => {
+  if (status === 'true') {
+    target.classList.add('is-favorite');
+    target.innerHTML = '&#9733; Favorite';
+  } else {
+    target.classList.remove('is-favorite');
+    target.innerHTML = '&#9734; Add to favorite';
+  }
+};
+
+/*
+ * Restaurant function add-to or remove-from favorites
+ */
+favoriteRestaurant = (target, restaurant) => {
+  if (target.className.indexOf('is-favorite') > -1) {
+    setFavoriteButton(target, 'false');
+    DBHelper.favoriteRestaurant(restaurant, 'false');
+  } else {
+    setFavoriteButton(target, 'true');
+    DBHelper.favoriteRestaurant(restaurant, 'true');
+  }
 };
 
 /**

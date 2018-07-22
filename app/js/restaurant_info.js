@@ -82,7 +82,15 @@ fetchRestaurantFromURL = callback => {
         newReview.parentNode.removeChild(newReview);
         return;
       }
-      document.title = self.restaurant.name + ' Restaurant Info';
+      document.title = `${restaurant.name} -  Info & Details`;
+      document
+        .querySelector('meta[name="description"]')
+        .setAttribute(
+          'content',
+          `Information about ${
+            restaurant.name
+          }: location, opnening hours and latest reviews`
+        );
       fillBreadcrumb();
       fillRestaurantHTML();
       lazyload();
@@ -406,7 +414,6 @@ submitReview = event => {
     form_messageArea.style.display = 'block';
     form_button.disabled = false;
   } else {
-    form_messageArea.classList.add('success');
     // Assing values to review object
     review = {
       restaurant_id: self.restaurant.id,
@@ -431,6 +438,8 @@ submitReview = event => {
           reviewList.appendChild(reviewHtml);
         }
         form_messageArea.setAttribute('class', 'success');
+        form_messageArea.innerHTML =
+          '<p>Thank you for sending your review!</p>';
         form_messageArea.style.display = 'block';
         form_button.disabled = false;
         smoothScrollTo('reviews-container', 650, 100);

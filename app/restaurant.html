@@ -6,6 +6,7 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Restaurant Info</title>
+  <meta name="description" content="Restaurant info page">
   <!-- build:css -->
   <!-- Main CSS file -->
   <link rel="stylesheet" href="css/styles.css" type="text/css">
@@ -98,35 +99,33 @@
 
     <section id="new-review">
       <h3 tabindex="0">Write your review</h3>
-
-      <div class="row">
-        <div id="new-review--msg" class="new-review--msg"></div>
-      </div>
-
+      <div id="new-review--msg" class="new-review--msg"></div>
       <form id="new-review-form" role="form">
-        <label for="new-review--name">
-          <h5>Your name</h5>
-        </label>
-        <input type="text" placeholder="Name (mininum 2 characters)" id="new-review--name" name="new-review--name" aria-label="Review Author Name"
-          pattern=".{2,}" required>
-        <label for="rating">
-          <h5>Rating</h5>
-        </label>
-        <select name="new-review--rating" id="new-review--rating" aria-label="Rating">
-          <option value="none" required selected>Rating</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
-        <label for="new-review--comment">
-          <h5>Your review</h5>
-          (100 mininum characters)
-        </label>
-        <textarea name="new-review--comment" id="new-review--comment" cols="40" rows="10" placeholder="Your review... " aria-label="Your review"
-          spellcheck="true" required aria-required="true" minlength="100"></textarea>
-        <input id="new-review--submit" type="submit" value="Submit your review">
+        <div class="new-review--container">
+          <label for="new-review--name">
+            <span class="label-title">Your name</span>
+          </label>
+          <input type="text" placeholder="Name (mininum 2 characters)" id="new-review--name" name="new-review--name" aria-label="Review Author Name"
+            pattern=".{2,}" required>
+          <label for="rating">
+            <span class="label-title">Rating</span>
+          </label>
+          <select name="new-review--rating" id="new-review--rating" aria-label="Rating">
+            <option value="none" required selected>Please select a rating</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+          <label for="new-review--comment">
+            <span class="label-title">Your review</span>
+            <span class="label-note">(100 mininum characters)</span>
+          </label>
+          <textarea name="new-review--comment" id="new-review--comment" cols="40" rows="10" placeholder="Your review... " aria-label="Your review"
+            spellcheck="true" required aria-required="true" minlength="100"></textarea>
+          <input id="new-review--submit" type="submit" value="Submit your review">
+        </div>
       </form>
     </section>
     <!-- End reviews -->

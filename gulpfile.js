@@ -158,7 +158,7 @@ gulp.task('gzip-html', () =>
 );
 
 /** critical css */
-gulp.task('criticalMain', ['minifyhtml'], function(cb) {
+gulp.task('criticalMain', ['minifycss', 'minifyhtml'], function(cb) {
   critical.generate({
     inline: true,
     base: 'temp',

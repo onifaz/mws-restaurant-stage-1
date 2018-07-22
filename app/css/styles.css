@@ -519,31 +519,63 @@ picture source {
 
   color: #595858;
 }
+.favorite-button,
+#favorite-button {
+  -webkit-appearance: none;
+}
+.map---placeholder a,
+.favorite-button,
+#favorite-button,
 #restaurants-list li a,
-.map---placeholder a {
+#new-review--submit {
   font-size: .875rem;
 
   display: block;
 
-  margin-top: auto;
-  padding: 10px 30px 12px;
+  margin-top: 10px;
+  padding: 12px 30px;
 
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
 
-  color: #1d50b0;
-  border: 1px solid #1d50b0;
   border-radius: 2px;
+}
+#restaurants-list li a,
+#new-review--submit {
+  margin-top: auto;
+
+  color: #ac201c;
+  border: 1px solid #ac201c;
   background-color: #fff;
 }
-#restaurants-list li a:visited {
-  color: #01447e;
-}
 #restaurants-list li a:hover,
-#restaurants-list li a:focus {
+#restaurants-list li a:focus,
+#new-review--submit:hover,
+#new-review--submit:focus {
+  color: #fff;
+  border-color: #8a1712;
+  background-color: #8a1712;
+}
+.map---placeholder a,
+.favorite-button,
+#favorite-button {
+  color: #1d50b0;
+  border: 1px solid #1d50b0;
+  background-color: #fff;
+}
+.map---placeholder a:hover,
+.favorite-button:hover,
+#favorite-button:hover,
+.map---placeholder a:focus,
+.favorite-button:focus,
+#favorite-button:focus {
   color: #fff;
   background: #1d50b0;
+}
+.favorite-button.is-favorite,
+#favorite-button.is-favorite {
+  font-weight: bold;
 }
 
 @media screen and (min-width: 680px) {
@@ -588,9 +620,16 @@ picture source {
 #restaurant-container {
   padding-bottom: 50px;
 }
-.inside article {
+
+.inside article,
+.new-review--container,
+#new-review--msg {
   max-width: 840px;
   margin: 0 auto;
+}
+
+.inside article,
+.new-review--container {
   padding: 15px;
 
   border-bottom: 3px solid #e53935;
@@ -611,6 +650,10 @@ picture source {
 
   color: #fff;
   background: #283593;
+}
+#favorite-button {
+  width: 100%;
+  margin: 10px auto 14px;
 }
 .restaurant-img {
   display: block;
@@ -668,7 +711,8 @@ table td {
   color: #595858;
 }
 
-#reviews-container h2 {
+#reviews-container h2,
+#new-review h3 {
   font-size: 1.5rem;
   font-weight: 300;
 
@@ -782,7 +826,84 @@ p.review--comment {
 }
 
 #new-review {
-  padding-bottom: 60px;
+  padding: 32px 15px 60px;
+}
+#new-review--msg ul,
+#new-review--msg p {
+  margin: 0 0 30px;
+
+  background: #484848;
+}
+#new-review--msg ul,
+#new-review--msg li,
+#new-review--msg p {
+  color: #fff;
+}
+#new-review--msg ul {
+  padding: 15px 32px 16px;
+}
+#new-review--msg.error ul {
+  background: brown;
+}
+#new-review--msg p {
+  padding: 15px 15px 16px;
+}
+
+#new-review--msg.success p {
+  background: #036363;
+}
+
+.new-review--container {
+  padding: 15px 30px;
+}
+form textarea,
+form input,
+form label {
+  display: block;
+
+  width: 100%;
+}
+form label {
+  padding: 15px 0 5px;
+}
+form input[type='text'],
+form textarea {
+  padding: 10px 5px;
+}
+form textarea {
+  min-width: 100%;
+  max-width: 100%;
+  height: 128px;
+  min-height: 48px;
+}
+#new-review--submit {
+  max-width: 400px;
+  margin: 25px 0 15px;
+
+  -webkit-appearance: none;
+}
+
+@media (min-width: 650px) and (max-width: 991px), (min-width: 1360px) {
+  .restaurant-title {
+    position: relative;
+  }
+  #favorite-button {
+    position: absolute;
+    top: -3px;
+    right: 7px;
+
+    width: auto;
+
+    color: #fff;
+    border-color: #fff;
+    background: none;
+  }
+  #favorite-button:hover,
+  #favorite-button:focus {
+    color: #283593;
+    border-color: #fff;
+    background: #fff;
+  }
 }
 
 @media screen and (min-width: 460px) {
@@ -867,7 +988,8 @@ p.review--comment {
   .restaurant-address p {
     padding-top: 10px;
   }
-  #reviews-container h2 {
+  #reviews-container h2,
+  #new-review h3 {
     padding: 0 30px 1em;
   }
   .review--notfound {
