@@ -673,8 +673,8 @@ picture source {
   color: #fff;
   background-color: #ac201b;
 }
-.restaurant-address h2,
-.restaurant-hours h2 {
+.restaurant-address h3,
+.restaurant-hours h3 {
   font-size: 1rem;
 
   margin: 0;
@@ -711,7 +711,7 @@ table td {
   color: #595858;
 }
 
-#reviews-container h2,
+#reviews-container h3,
 #new-review h3 {
   font-size: 1.5rem;
   font-weight: 300;
@@ -889,10 +889,13 @@ form textarea {
   }
   #favorite-button {
     position: absolute;
-    top: -3px;
+    top: 50%;
     right: 7px;
 
     width: auto;
+    margin: 0;
+
+    transform: translateY(-50%);
 
     color: #fff;
     border-color: #fff;
@@ -974,6 +977,9 @@ form textarea {
 
     transform: translateX(-30px);
   }
+  #favorite-button {
+    right: 24px;
+  }
   .restaurant-address,
   .restaurant-hours {
     float: left;
@@ -988,7 +994,7 @@ form textarea {
   .restaurant-address p {
     padding-top: 10px;
   }
-  #reviews-container h2,
+  #reviews-container h3,
   #new-review h3 {
     padding: 0 30px 1em;
   }

@@ -205,7 +205,12 @@ createRestaurantHTML = restaurant => {
   const favoriteBtn = document.createElement('button');
   favoriteBtn.setAttribute('class', 'favorite-button');
   const status = restaurant.is_favorite == 'true' ? 'true' : 'false';
-  setFavoriteButton(favoriteBtn, status);
+  setFavoriteButton(favoriteBtn, status, restaurant);
+  // if (status === 'false')
+  //   favoriteBtn.setAttribute(
+  //     'arial-label',
+  //     `Add ${restaurant.name} to your favorite list.`
+  //   );
   favoriteBtn.addEventListener('click', event => {
     favoriteRestaurant(event.target, restaurant);
   });
@@ -220,13 +225,23 @@ createRestaurantHTML = restaurant => {
 /*
  * Set status (text and class) for favorite button
  */
-setFavoriteButton = (target, status) => {
+setFavoriteButton = (target, status, restaurant) => {
   if (status === 'true') {
     target.classList.add('is-favorite');
     target.innerHTML = '&#9733; Favorite';
+    target.setAttribute(
+      'arial-label',
+      `${
+        restaurant.name
+      } is one of your favorite restaurants. Click to remove it from your favorites' list`
+    );
   } else {
     target.classList.remove('is-favorite');
     target.innerHTML = '&#9734; Add to favorite';
+    target.setAttribute(
+      'arial-label',
+      `Add ${restaurant.name} to your favorite list.`
+    );
   }
 };
 

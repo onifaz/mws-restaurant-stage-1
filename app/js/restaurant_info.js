@@ -107,7 +107,12 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const favoriteBtn = document.getElementById('favorite-button');
   if (restaurant.is_favorite == 'true') {
-    setFavoriteButton(favoriteBtn, 'true');
+    setFavoriteButton(favoriteBtn, 'true', restaurant);
+  } else {
+    favoriteBtn.setAttribute(
+      'arial-label',
+      `Add ${restaurant.name} to your favorite list.`
+    );
   }
   favoriteBtn.addEventListener('click', event => {
     favoriteRestaurant(event.target, restaurant);
@@ -136,13 +141,23 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 /*
  * Set status (text and class) for favorite button
  */
-setFavoriteButton = (target, status) => {
+setFavoriteButton = (target, status, restaurant) => {
   if (status === 'true') {
     target.classList.add('is-favorite');
     target.innerHTML = '&#9733; Favorite';
+    target.setAttribute(
+      'arial-label',
+      `${
+        restaurant.name
+      } is one of your favorite restaurants. Click to remove it from your favorites' list`
+    );
   } else {
     target.classList.remove('is-favorite');
     target.innerHTML = '&#9734; Add to favorite';
+    target.setAttribute(
+      'arial-label',
+      `Add ${restaurant.name} to your favorite list.`
+    );
   }
 };
 
@@ -151,10 +166,10 @@ setFavoriteButton = (target, status) => {
  */
 favoriteRestaurant = (target, restaurant) => {
   if (target.className.indexOf('is-favorite') > -1) {
-    setFavoriteButton(target, 'false');
+    setFavoriteButton(target, 'false', restaurant);
     DBHelper.favoriteRestaurant(restaurant, 'false');
   } else {
-    setFavoriteButton(target, 'true');
+    setFavoriteButton(target, 'true', restaurant);
     DBHelper.favoriteRestaurant(restaurant, 'true');
   }
 };
@@ -226,7 +241,7 @@ fillRestaurantHoursHTML = (
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
-  const title = document.createElement('h2');
+  const title = document.createElement('h3');
 
   title.innerHTML = 'Reviews';
   title.setAttribute('id', 'reviews-title');
@@ -259,7 +274,7 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
 };
 fillErrorReviewsHTML = () => {
   const container = document.getElementById('reviews-container');
-  const title = document.createElement('h2');
+  const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
   title.setAttribute('id', 'reviews-title');
   container.appendChild(title);
